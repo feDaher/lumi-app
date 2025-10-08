@@ -2,21 +2,12 @@ import { useEffect, useState } from "react";
 import { View, Text, Pressable, ActivityIndicator } from "react-native";
 import * as SecureStore from "expo-secure-store";
 import { Stack, router } from "expo-router";
-
-type User = {
-  id: string;
-  username: string;
-  fullName: string;
-  cpf: string;
-  email: string;
-  senha: string;
-};
+import { User } from "@/src/types";
 
 export default function Home() {
     const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // busca o usuario salvo
    useEffect(() => {
     const loadUser = async () => {
       try {
@@ -36,7 +27,7 @@ export default function Home() {
 
   const handleLogout = async () => {
     await SecureStore.deleteItemAsync("user");
-    router.replace("/"); // volta para o login
+    router.replace("/");
   };
 
   if (loading) {

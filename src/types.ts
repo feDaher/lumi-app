@@ -4,3 +4,13 @@ export type Task = {
   done: boolean;
   createdAt: number;
 };
+
+
+export type User = {
+  id: string;
+  username: string;
+  fullName: string;
+  cpf: string;
+  email: string;
+  senha: string;
+};

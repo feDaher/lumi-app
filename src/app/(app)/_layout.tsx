@@ -18,7 +18,7 @@ export default function AppTabs() {
         }}
       />
 
-      <Tabs.Screen
+      {/* <Tabs.Screen
         name="tasks"
         options={{
           title: 'Tarefas',
@@ -41,7 +41,7 @@ export default function AppTabs() {
           title: 'Ajustes',
           tabBarIcon: ({ color, size }) => <Ionicons name="settings" size={size} color={color} />,
         }}
-      />
+      /> */}
     </Tabs>
   );
 }

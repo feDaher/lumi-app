@@ -1,13 +1,13 @@
 {
   "expo": {
-    "name": "Itens de Tarefas",
-    "slug": "tasks",
+    "name": "Lumi",
+    "slug": "lumi-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
-    "scheme": "tasks",
+    "scheme": "lumi-app",
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
