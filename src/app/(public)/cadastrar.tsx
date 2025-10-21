@@ -73,7 +73,7 @@ export default function Cadastrar() {
       }}  
       resizeMode="cover"
     >
-    <View style={{ alignItems: "center", marginTop: 150, marginBottom: -250 }}>
+    <View style={{ alignItems: "center", marginTop: 140, marginBottom: -250 }}>
       <Image
         source={require("assets/logo1.png")}
         style={{width:120, height: 120}}
@@ -97,19 +97,24 @@ export default function Cadastrar() {
     </Pressable>
 
     <ScrollView 
-        style={{ flex: 1, 
-        paddingHorizontal: 5, 
-        marginTop: 300}}> 
+        style={{ 
+          flex: 1}}
+        contentContainerStyle={{
+        flexGrow: 1,
+        paddingTop: 300,
+        alignItems: "center"
+        }}> 
   
       <View 
         style={{
           backgroundColor: "#EBEDD8",
           borderRadius: 60,
-          padding: 30,  
+          padding: 40,
+          width: "100%",
+          maxHeight: 900,
+          alignSelf: "center"
         }}
       >
-
-      <Stack.Screen options={{ title: "Cadastro de Usuário", headerShown: true }} />
 
       <Input
         className="w-full bg-white border-zinc-300 rounded-xl px-4 py-3 mb-6 mt-4"
