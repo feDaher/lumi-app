@@ -12,5 +12,6 @@ export type User = {
   fullName: string;
   cpf: string;
   email: string;
-  senha: string;
+  password: string;
+  confirmPass: string;
 };
