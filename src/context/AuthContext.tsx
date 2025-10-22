@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useMemo, useState } from '
 import * as SecureStore from 'expo-secure-store';
 import { AUTH_KEY } from '@/src/env';
 
-type User = { email: string; password: string };
+type AppUser = { email: string; password: string };
 
 
 type AuthContextType = {
@@ -34,7 +34,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!email || !password) throw new Error('Informe e-mail e senha');
 
     const usersData = await SecureStore.getItemAsync("users");
-    const users: User[] = usersData ? JSON.parse(usersData) : [];
+    const users: AppUser[] = usersData ? JSON.parse(usersData) : [];
 
     if (users.some(u => u.email === email)) {
       throw new Error("E-mail já registrado!");
@@ -52,7 +52,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!email || !password) throw new Error('Informe e-mail e senha');
 
     const usersData = await SecureStore.getItemAsync("users");
-    const users: User[] = usersData ? JSON.parse(usersData) : [];
+    const users: AppUser[] = usersData ? JSON.parse(usersData) : [];
 
     const foundUser = users.find(u => u.email === email);
   

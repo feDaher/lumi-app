@@ -146,6 +146,7 @@ export default function Cadastrar() {
         placeholder="Crie sua senha"
         autoCapitalize="none"
         secureTextEntry={!showPwd}
+        maxLength={256}
         value={senha}
         onChangeText={setSenha}
 
