@@ -1,10 +1,11 @@
-import { useState } from "react";
-import { View, Text, Pressable, Alert, ScrollView } from "react-native";
+import { use, useState } from "react";
+import { View, Text, Alert, Pressable, ScrollView, ImageBackground, Image, KeyboardAvoidingView, Platform } from "react-native";
 import { Stack, router } from "expo-router";
 import * as SecureStore from "expo-secure-store";
-import { v4 as uuidv4 } from "uuid";
+import  uuid  from "react-native-uuid";
 import Input from "../components/Input";
 import { isValidEmail, maskCPF }  from "../../utils";
+import { Feather } from "@expo/vector-icons";
 
 export default function Cadastrar() {
   const [username, setUsername] = useState("");
@@ -14,11 +15,13 @@ export default function Cadastrar() {
   const [senha, setSenha] = useState("");
   const [confirmSenha, setConfirmSenha] = useState("");
   const [loading, setLoading] = useState<boolean>(false);
+  const [showPwd, setShowPwd] = useState(false);
+  const [showPwdConfirm, setShowPwdConfirm] = useState(false);
 
   const handleCadastro = async () => {
     const cleanCpf = cpf.replace(/\D/g, "");
 
-    if (!username || !fullName || !cpf || !email || !senha || !confirmSenha) {
+    if (!fullName || !cpf || !email || !senha || !confirmSenha) {
       return Alert.alert("Inválido!", "Preencha todos os campos!");
     }
     if (!isValidEmail(email)) {
@@ -27,15 +30,19 @@ export default function Cadastrar() {
     if (cleanCpf.length !== 11) {
       return Alert.alert("Inválido!", "O CPF precisa ter 11 dígitos.");
     }
+    if (senha.length < 6) {
+      return Alert.alert("Erro", "Senha muito fraca!")
+    }
     if (senha !== confirmSenha) {
       return Alert.alert("Erro", "As senhas não conferem.");
     }
+
 
     try {
       setLoading(true);
 
       const newUser = {
-        id: uuidv4(),
+        id: uuid.v4(),
         username,
         fullName,
         cpf: cleanCpf,
@@ -55,73 +62,147 @@ export default function Cadastrar() {
   };
 
   return (
-    <ScrollView className="flex-1 bg-white px-6">
-      <Stack.Screen options={{ title: "Cadastro de Usuário", headerShown: true }} />
+  <KeyboardAvoidingView
+    style={{ flex: 1}}
+    behavior={Platform.OS === "ios" ? "padding" : "height"}
+  >
+  <ImageBackground
+      source={require("assets/fundo.png")}
+      style={{
+        flex: 1
+      }}  
+      resizeMode="cover"
+    >
+    <View style={{ alignItems: "center", marginTop: 140, marginBottom: -250 }}>
+      <Image
+        source={require("assets/logo1.png")}
+        style={{width:120, height: 120}}
+      />
+    </View>
 
-      <Text className="text-2xl font-bold mt-6 mb-4 text-center">
-        Criar uma conta
-      </Text>
+    <Pressable
+      onPress={() => router.back()}
+      style={{
+        position: "absolute",
+        top: 40,
+        left: 20,
+        zIndex: 10,
+        padding: 5,
+        backgroundColor: "#ffffff",
+        borderRadius: 20
+      }}
+      >
+      <Feather name="arrow-left" size={28} color="#313233"/>
+    
+    </Pressable>
+
+    <ScrollView 
+        style={{ 
+          flex: 1}}
+        contentContainerStyle={{
+        flexGrow: 1,
+        paddingTop: 300,
+        alignItems: "center"
+        }}> 
+  
+      <View 
+        style={{
+          backgroundColor: "#EBEDD8",
+          borderRadius: 60,
+          padding: 40,
+          width: "100%",
+          maxHeight: 900,
+          alignSelf: "center"
+        }}
+      >
 
       <Input
-        className="w-full border border-zinc-300 rounded-xl px-4 py-3 mb-3"
-        placeholder="Usuário"
-        value={username}
-        onChangeText={setUsername}
+        className="w-full bg-white border-zinc-300 rounded-xl px-4 py-3 mb-6 mt-4"
+        placeholder="Nome Completo"
+        value={fullName}
+        onChangeText={setFullName}
         autoCapitalize="none"
       />
 
       <Input
-        className="w-full border border-zinc-300 rounded-xl px-4 py-3 mb-3"
-        placeholder="Nome completo"
-        value={fullName}
-        onChangeText={setFullName}
-      />
-
-      <Input
-        className="w-full border border-zinc-300 rounded-xl px-4 py-3 mb-3"
+        className="w-full bg-white border-zinc-300 rounded-xl px-4 py-3 mb-6"
         placeholder="CPF"
         keyboardType="numeric"
-        maxLength={14}
         value={cpf}
         onChangeText={(text) => setCpf(maskCPF(text))}
       />
 
       <Input
-        className="w-full border border-zinc-300 rounded-xl px-4 py-3 mb-3"
-        placeholder="E-mail"
+        className="w-full bg-white border-zinc-300 rounded-xl px-4 py-3 mb-6"
+        placeholder="@ E-mail"
         keyboardType="email-address"
-        autoCapitalize="none"
+        maxLength={100}
         value={email}
         onChangeText={setEmail}
       />
 
+    <View className="w-full bg-white border-zinc-300 rounded-xl px-4 py-3 mb-6">
       <Input
-        className="w-full border border-zinc-300 rounded-xl px-4 py-3 mb-3"
-        placeholder="Senha"
-        secureTextEntry
+        placeholder="Crie sua senha"
+        autoCapitalize="none"
+        secureTextEntry={!showPwd}
+        maxLength={256}
         value={senha}
         onChangeText={setSenha}
+
       />
 
+      <Pressable onPress={()=> setShowPwd(!showPwd)} className="absolute right-6 top-3">
+        < Feather
+          name={showPwd ? "eye" : "eye-off"}
+          size={24}
+          color={"#313233ff"}
+        />
+      </Pressable>
+    </View>
+    
+    <View className="w-full bg-white border-zinc-300 rounded-xl px-4 py-3 mb-10">
       <Input
-        className="w-full border border-zinc-300 rounded-xl px-4 py-3 mb-4"
-        placeholder="Confirmar Senha"
-        secureTextEntry
+        placeholder="Repita sua senha"
+        autoCapitalize="none"
+        secureTextEntry={!showPwdConfirm}
         value={confirmSenha}
         onChangeText={setConfirmSenha}
       />
 
+      <Pressable onPress={()=> setShowPwdConfirm(!showPwdConfirm)} className="absolute right-6 top-3">
+        < Feather
+          name={showPwdConfirm ? "eye" : "eye-off"}
+          size={24}
+          color={"#313233ff"}
+        />
+      </Pressable>
+    </View>
+
       <Pressable
         onPress={handleCadastro}
         disabled={loading}
-        className="w-full rounded-xl px-4 py-3 items-center justify-center bg-green-600 mb-6 disabled:opacity-60"
+        className="w-32 rounded-xl px-1 py-3 items-center justify-center bg-white mb-6 disabled:opacity-60 self-center shadow-md"
       >
-        <Text className="text-white font-semibold">
+        <Text className="text-black font-semibold">
           {loading ? "Cadastrando..." : "Cadastrar"}
         </Text>
       </Pressable>
 
+      <Pressable
+        onPress={() => router.back()}
+        disabled={loading}
+        className="w-32 rounded-xl px-1 py-3 items-center justify-center mb-6 disabled:opacity-60 self-center"
+        >
+          <Text className="text-black font-semibold">
+            {loading ? "Cancelando..." : "Cancelar"}
+          </Text>
+        </Pressable>
+
       <View className="h-6" />
+      </View>    
     </ScrollView>
+  </ImageBackground>
+</KeyboardAvoidingView>
   );
 }
