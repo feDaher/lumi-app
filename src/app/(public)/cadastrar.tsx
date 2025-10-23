@@ -1,5 +1,5 @@
 import { use, useState } from "react";
-import { View, Text, Alert, Pressable, ScrollView, ImageBackground, Image, KeyboardAvoidingView, Platform } from "react-native";
+import { View, Text, Alert, Pressable, ScrollView, ImageBackground, Image, KeyboardAvoidingView, Platform, TouchableOpacity } from "react-native";
 import { Stack, router } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import  uuid  from "react-native-uuid";
@@ -68,9 +68,7 @@ export default function Cadastrar() {
   >
   <ImageBackground
       source={require("assets/fundo.png")}
-      style={{
-        flex: 1
-      }}  
+      className="flex-1"  
       resizeMode="cover"
     >
     <View style={{ alignItems: "center", marginTop: 140, marginBottom: -250 }}>
@@ -98,17 +96,19 @@ export default function Cadastrar() {
 
     <ScrollView 
         style={{ 
-          flex: 1}}
+          flex: 1
+        }}
         contentContainerStyle={{
-        flexGrow: 1,
-        paddingTop: 300,
-        alignItems: "center"
+          flexGrow: 1,
+          paddingTop: 300,
+          alignItems: "center"
         }}> 
   
       <View 
         style={{
           backgroundColor: "#EBEDD8",
-          borderRadius: 60,
+          borderTopLeftRadius: 60,
+          borderTopRightRadius: 60,
           padding: 40,
           width: "100%",
           maxHeight: 900,
@@ -141,7 +141,7 @@ export default function Cadastrar() {
         onChangeText={setEmail}
       />
 
-    <View className="w-full bg-white border-zinc-300 rounded-xl px-4 py-3 mb-6">
+    <View className="w-full bg-white border-zinc-300 rounded-xl px-2 py-1 mb-6">
       <Input
         placeholder="Crie sua senha"
         autoCapitalize="none"
@@ -161,7 +161,7 @@ export default function Cadastrar() {
       </Pressable>
     </View>
     
-    <View className="w-full bg-white border-zinc-300 rounded-xl px-4 py-3 mb-10">
+    <View className="w-full bg-white border-zinc-300 rounded-xl px-2 py-1 mb-10">
       <Input
         placeholder="Repita sua senha"
         autoCapitalize="none"
@@ -179,7 +179,7 @@ export default function Cadastrar() {
       </Pressable>
     </View>
 
-      <Pressable
+      <TouchableOpacity
         onPress={handleCadastro}
         disabled={loading}
         className="w-32 rounded-xl px-1 py-3 items-center justify-center bg-white mb-6 disabled:opacity-60 self-center shadow-md"
@@ -187,9 +187,9 @@ export default function Cadastrar() {
         <Text className="text-black font-semibold">
           {loading ? "Cadastrando..." : "Cadastrar"}
         </Text>
-      </Pressable>
+      </TouchableOpacity>
 
-      <Pressable
+      <TouchableOpacity
         onPress={() => router.back()}
         disabled={loading}
         className="w-32 rounded-xl px-1 py-3 items-center justify-center mb-6 disabled:opacity-60 self-center"
@@ -197,7 +197,7 @@ export default function Cadastrar() {
           <Text className="text-black font-semibold">
             {loading ? "Cancelando..." : "Cancelar"}
           </Text>
-        </Pressable>
+        </TouchableOpacity>
 
       <View className="h-6" />
       </View>    
