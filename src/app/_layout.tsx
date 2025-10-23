@@ -1,6 +1,8 @@
 import { Slot, useRouter, useSegments } from "expo-router";
 import { useEffect } from "react";
-import { ActivityIndicator, View } from "react-native";
+import { ActivityIndicator, Button, View } from "react-native";
+import { StatusBar } from "expo-status-bar";
+import { useColorScheme } from "nativewind";
 import { AuthProvider, useAuth } from "@/src/context/AuthContext";
 
 function RootNavigationGuard() {
@@ -12,7 +14,6 @@ function RootNavigationGuard() {
     if (isLoading) return;
 
     const UNAUTH_GROUPS = new Set(["(auth)", "(public)"]);
-
     const currentGroup = segments?.[0] ?? "";
     const isInUnauthGroup = UNAUTH_GROUPS.has(currentGroup);
 
@@ -29,7 +30,7 @@ function RootNavigationGuard() {
 
   if (isLoading || !segments) {
     return (
-      <View className="flex-1 items-center justify-center bg-white">
+      <View className="flex-1 items-center justify-center bg-white dark:bg-black">
         <ActivityIndicator />
       </View>
     );
@@ -39,9 +40,14 @@ function RootNavigationGuard() {
 }
 
 export default function RootLayout() {
+  const { colorScheme, toggleColorScheme } = useColorScheme();
+  console.log(colorScheme);
   return (
-    <AuthProvider>
-      <RootNavigationGuard />
-    </AuthProvider>
+    <>
+      <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
+      <AuthProvider>
+        <RootNavigationGuard />
+      </AuthProvider>
+    </>
   );
 }

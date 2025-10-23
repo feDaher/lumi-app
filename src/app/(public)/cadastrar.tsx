@@ -104,16 +104,8 @@ export default function Cadastrar() {
           alignItems: "center"
         }}> 
   
-      <View 
-        style={{
-          backgroundColor: "#EBEDD8",
-          borderTopLeftRadius: 60,
-          borderTopRightRadius: 60,
-          padding: 40,
-          width: "100%",
-          maxHeight: 900,
-          alignSelf: "center"
-        }}
+      <View
+       className="bg-cream rounded-t-[60px] p-10 w-full max-h-[900px] self-center"
       >
 
       <Input
