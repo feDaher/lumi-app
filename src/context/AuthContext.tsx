@@ -30,7 +30,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     })();
   }, []);
 
-    const signUp = async (email: string, password: string) => {
+  const signUp = async (email: string, password: string) => {
     if (!email || !password) throw new Error('Informe e-mail e senha');
 
     const usersData = await SecureStore.getItemAsync("users");

@@ -2,7 +2,7 @@ import { TouchableOpacity } from "react-native";
 import { useColorScheme } from "nativewind";
 import { Feather } from "@expo/vector-icons";
 
-export function ThemeToggle() {
+export default function ThemeToggle() {
   const { colorScheme, toggleColorScheme } = useColorScheme();
 
   return (

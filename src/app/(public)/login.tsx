@@ -1,14 +1,11 @@
 import { useState } from "react";
 import { View, Text, Pressable, Alert } from "react-native";
 import { Stack, router } from "expo-router";
-import { Feather } from "@expo/vector-icons";
 import { useAuth } from "@/src/context/AuthContext";
-import { useColorScheme } from "nativewind";
 import Input from "../components/Input";
 
 export default function Login() {
   const { signIn } = useAuth();
-  const { colorScheme, toggleColorScheme } = useColorScheme(); // 🌗 controle do tema
   const [email, setEmail] = useState<string>("");
   const [pwd, setPwd] = useState<string>("");
   const [loading, setLoading] = useState(false);
@@ -27,18 +24,6 @@ export default function Login() {
   return (
     <View className="flex-1 items-center justify-center bg-white dark:bg-[#0f0f0f] px-6">
       <Stack.Screen options={{ title: "Entrar", headerShown: true }} />
-
-      {/* 🌞 / 🌙 Botão de alternar tema */}
-      <Pressable
-        onPress={toggleColorScheme}
-        className="absolute top-10 right-6 p-2 rounded-full bg-zinc-200 dark:bg-zinc-800"
-      >
-        {colorScheme === "dark" ? (
-          <Feather name="sun" size={22} color="#facc15" /> // ☀️ ícone sol
-        ) : (
-          <Feather name="moon" size={22} color="#0f172a" /> // 🌙 ícone lua
-        )}
-      </Pressable>
 
       <Text className="text-2xl font-bold mb-6 text-zinc-800 dark:text-zinc-100">
         Bem-vindo
