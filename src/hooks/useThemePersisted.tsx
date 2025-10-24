@@ -1,4 +1,3 @@
-// src/hooks/useThemePersisted.ts (para NativeWind v2)
 import { useCallback, useEffect, useState } from "react";
 import { Appearance } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
