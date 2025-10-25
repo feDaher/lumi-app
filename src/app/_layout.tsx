@@ -1,5 +1,5 @@
 import { Slot, useRouter, useSegments } from "expo-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
 import { AuthProvider, useAuth } from "@/src/context/AuthContext";
 
@@ -7,22 +7,23 @@ function RootNavigationGuard() {
   const { token, isLoading } = useAuth();
   const segments = useSegments();
   const router = useRouter();
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    if (isLoading) return;
+    if (isLoading || !segments) return;
 
     const UNAUTH_GROUPS = new Set(["(auth)", "(public)"]);
 
-    const currentGroup = segments?.[0] ?? "";
+    const currentGroup = segments[0] ?? "";
     const isInUnauthGroup = UNAUTH_GROUPS.has(currentGroup);
 
     if (!token && !isInUnauthGroup) {
-      router.replace("/login");
+      router.replace("/splash");
       return;
     }
 
     if (token && isInUnauthGroup) {
-      router.replace("/home");
+      router.replace("/index");
       return;
     }
   }, [token, isLoading, segments, router]);
