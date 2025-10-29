@@ -60,7 +60,7 @@ export default function Login() {
         onPress={() => router.push("/cadastrar")}
         className="w-full rounded-xl px-4 py-3 items-center justify-center bg-green-600 dark:bg-green-700"
       >
-        <Text className="text-white font-semibold">Cadastrar!</Text>
+        <Text className="text-white font-semibold">Cadastrar!!!</Text>
       </Pressable>
     </View>
   );
