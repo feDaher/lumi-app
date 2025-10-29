@@ -49,6 +49,7 @@ export default function Index() {
       style={styles.fundo}
       resizeMode="cover"
       onLoadEnd={() => setIsReady(true)}
+      onLayout={onLayoutRootView}
     >
     <Animated.Image
       source={require("../../assets/logo.png")}
