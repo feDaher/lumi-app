@@ -7,7 +7,7 @@ export type ConfirmOption = {
   label: string;
   icon?: keyof typeof Ionicons.glyphMap;
   defaultChecked?: boolean;
-  locked?: boolean; //  define se não pode ser desmarcada
+  locked?: boolean;
 };
 
 type Props = {
@@ -35,7 +35,6 @@ export default function ModalConfirm({
     if (visible) {
       const initial: Record<string, boolean> = {};
       options.forEach((o) => {
-        // se for locked, já marca como true
         if (o.locked) {
           initial[o.id] = true;
         } else {
@@ -48,7 +47,7 @@ export default function ModalConfirm({
 
   const toggle = (id: string) => {
     const opt = options.find((o) => o.id === id);
-    if (opt?.locked) return; // impede alterar locked
+    if (opt?.locked) return;
     setSelected((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 

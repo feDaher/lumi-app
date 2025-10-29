@@ -3,7 +3,7 @@ import { Modal, View, Text, Pressable } from "react-native";
 
 type Props = {
   visible: boolean;                  
-  title?: string;
+  title: string;
   message?: string;
   buttonText?: string;
   onClose?: () => void;

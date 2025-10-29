@@ -7,19 +7,15 @@ export default function Dashboard() {
   const [confirmOpen, setConfirmOpen] = useState<boolean>(false);
   const [successOpen, setSuccessOpen] = useState<boolean>(false);
 
-  // OPÇÕES:
 const options: ConfirmOption[] = [
   { id: "send_location", label: "Enviar sua localização.", icon: "location-outline", locked: true }, // sempre selecionada
   { id: "alert_contact", label: "Alertar seu contato de emergência.", icon: "person-outline", defaultChecked: true },
   { id: "notify_authority", label: "Notificar autoridades próximas.", icon: "warning-outline", defaultChecked: true },
 ];
-
-  
-  // o que acontece ao confirmar
+ 
   const handleConfirm = (selected: string[]) => {
     setConfirmOpen(false);
 
-    // SELEÇÕES:
     if (selected.includes("send_location")) {
       console.log("Enviando localização...");
     }
@@ -30,7 +26,6 @@ const options: ConfirmOption[] = [
       console.log("Notificando autoridades...");
     }
 
-    // abre o modal de sucesso depois
     setSuccessOpen(true);
   };
 
@@ -38,7 +33,7 @@ const options: ConfirmOption[] = [
     <View className="flex-1 items-center justify-center bg-white">
       <Text className="text-xl font-bold mb-6">Bem-vindo(a) 👋</Text>
 
-      {/* Botão principal para abrir o modal */}
+      {}
 <Pressable
   onPress={() => setConfirmOpen(true)}
   className="h-20 w-64 rounded-full bg-rose-600 items-center justify-center shadow-md"
@@ -47,7 +42,7 @@ const options: ConfirmOption[] = [
     ACIONAR ALARME!
   </Text>
 </Pressable>
-     {/* Modal de confirmação */}
+     {}
       <ModalConfirm
         visible={confirmOpen}
         options={options}
@@ -55,11 +50,14 @@ const options: ConfirmOption[] = [
         onConfirm={handleConfirm}
       />
 
-      {/* Modal de sucesso */}
+      {}
       <ModalSuccess
         visible={successOpen}
+        title="Sucesso!"
+        message="Seu alerta foi enviado com sucesso."
+        buttonText="Fechar"
         onClose={() => setSuccessOpen(false)}
-      />
+/>
     </View>
   );
 }
