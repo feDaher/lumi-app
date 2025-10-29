@@ -2,13 +2,14 @@ import { useState } from "react";
 import { View, Text, Pressable, Alert, Image, SafeAreaView, KeyboardAvoidingView, Platform, ImageBackground } from "react-native";
 import { useAuth } from "@/src/context/AuthContext";
 import { Stack, router } from "expo-router";
+import { useAuth } from "@/src/context/AuthContext";
 import Input from "../components/Input";
 import { Feather } from '@expo/vector-icons';
 
 export default function Login() {
   const { signIn } = useAuth();
-  const [email, setEmail] = useState<string>('');
-  const [pwd, setPwd] = useState<string>('');
+  const [email, setEmail] = useState<string>("");
+  const [pwd, setPwd] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [isPasswordVisible, setPasswordVisible] = useState(false);
 
@@ -25,7 +26,6 @@ export default function Login() {
 
   return (
     <ImageBackground
-      
       source={require('@/assets/fundo.png')} 
       resizeMode="cover" 
       className="flex-1"
