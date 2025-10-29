@@ -16,7 +16,6 @@ export default function Welcome() {
         if (status === "granted") {
           granted = true;
           let location = await Location.getCurrentPositionAsync({});
-          console.log("Localização atual:", location);
           break;
         } else {
           await new Promise((resolve) => {
@@ -42,7 +41,7 @@ export default function Welcome() {
       resizeMode="cover"
       className="flex-1 justify-between items-center"
     >
-      {/* Logo principal */}
+      
       <View className="items-center mt-20">
         <Image
           source={require("../../../assets/logo-lotus.png")}
@@ -50,8 +49,7 @@ export default function Welcome() {
           resizeMode="contain"
         />
       </View>
-
-      {/* Flor e botão */}
+      
       <View className="items-center mb-12 relative w-full">
         <Image
           source={require("../../../assets/logo-texto.png")}
