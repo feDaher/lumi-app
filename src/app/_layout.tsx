@@ -24,12 +24,15 @@ function RootNavigationGuard() {
       return;
     }
     if (token && isInUnauthGroup) {
-      router.replace("/index");
+      router.replace("/(app)/home");
       return;
     }
+
+    setReady(true);
   }, [token, isLoading, segments, router]);
 
-  if (isLoading || !segments) {
+
+  if (isLoading || !ready) {
     return (
       <View className="flex-1 items-center justify-center bg-light dark:bg-dark">
         <ActivityIndicator />
