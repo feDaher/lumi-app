@@ -25,7 +25,6 @@ export default function Login() {
 
   return (
     <ImageBackground
-      
       source={require('@/assets/fundo.png')} 
       resizeMode="cover" 
       className="flex-1"
