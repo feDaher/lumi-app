@@ -1,14 +1,16 @@
 import { useState } from "react";
-import { View, Text, Pressable, Alert } from "react-native";
-import { Stack, router } from "expo-router";
+import { View, Text, Pressable, Alert, Image, SafeAreaView, KeyboardAvoidingView, Platform, ImageBackground, TouchableWithoutFeedback, Keyboard } from "react-native";
 import { useAuth } from "@/src/context/AuthContext";
+import { Stack, router } from "expo-router";
 import Input from "../components/Input";
+import { Feather } from '@expo/vector-icons';
 
 export default function Login() {
   const { signIn } = useAuth();
-  const [email, setEmail] = useState<string>("");
-  const [pwd, setPwd] = useState<string>("");
+  const [email, setEmail] = useState<string>('');
+  const [pwd, setPwd] = useState<string>('');
   const [loading, setLoading] = useState(false);
+  const [isPasswordVisible, setPasswordVisible] = useState(false);
 
   const handleLogin = async () => {
     try {
@@ -22,46 +24,77 @@ export default function Login() {
   };
 
   return (
-    <View className="flex-1 items-center justify-center bg-white dark:bg-[#0f0f0f] px-6">
-      <Stack.Screen options={{ title: "Entrar", headerShown: true }} />
+    <ImageBackground
+      source={require('@/assets/fundo.png')} 
+      resizeMode="cover"
+      className="flex-1"
+    >
+      <SafeAreaView className="flex-1">
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios'? 'padding' : 'height'}
+          className="flex-1 justify-center items-center px-8"
+        >
+          <Stack.Screen options={{ headerShown: false }} />
 
-      <Text className="text-2xl font-bold mb-6 text-zinc-800 dark:text-zinc-100">
-        Bem-vindo
-      </Text>
+          <Image
+            source={require('@/assets/logo1.png')}
+            className="w-60 h-60 mb-12"
+            resizeMode="contain"
+          />
 
-      <Input
-        className="w-full border border-zinc-300 dark:border-zinc-600 rounded-xl px-4 py-3 mb-3 bg-white dark:bg-zinc-900 text-zinc-800 dark:text-zinc-100"
-        placeholder="E-mail"
-        keyboardType="email-address"
-        autoCapitalize="none"
-        value={email}
-        onChangeText={setEmail}
-      />
+          <View className="w-full mb-4">
+            <Text className="text-[#ffffff] text-base mb-2 ml-4">E-mail</Text>
+            <Input
+              style={{ backgroundColor: '#EBEDD8' }}
+              className="w-full rounded-2xl px-6 py-4 text-[#313233]"
+              placeholder="@ e-mail"
+              placeholderTextColor="#a1a1aa"
+              keyboardType="email-address"
+              autoCapitalize="none"
+              value={email}
+              onChangeText={setEmail}
+            />
+          </View>
 
-      <Input
-        className="w-full border border-zinc-300 dark:border-zinc-600 rounded-xl px-4 py-3 mb-4 bg-white dark:bg-zinc-900 text-zinc-800 dark:text-zinc-100"
-        placeholder="Senha"
-        secureTextEntry
-        value={pwd}
-        onChangeText={setPwd}
-      />
+          <View className="w-full mb-6">
+            <Text className="text-[#ffffff] text-base mb-2 ml-4">Senha</Text>
+            <View style={{ backgroundColor: '#EBEDD8' }} className="flex-row items-center w-full rounded-2xl px-6">
+              <Input
+                className="flex-1 py-4 text-[#313233]"
+                placeholder="senha"
+                placeholderTextColor="#a1a1aa"
+                secureTextEntry={!isPasswordVisible}
+                value={pwd}
+                onChangeText={setPwd}
+              />
+              <Pressable onPress={() => setPasswordVisible(!isPasswordVisible)}>
+                <Feather name={isPasswordVisible? "eye" : "eye-off"} size={24} color="#313233" />
+              </Pressable>
+            </View>
+          </View>
 
-      <Pressable
-        onPress={handleLogin}
-        disabled={loading}
-        className="w-full rounded-xl px-4 py-3 items-center justify-center bg-zinc-800 dark:bg-zinc-700 mb-4 disabled:opacity-60"
-      >
-        <Text className="text-white font-semibold">
-          {loading ? "Entrando..." : "Entrar"}
-        </Text>
-      </Pressable>
+          <Pressable
+            onPress={handleLogin}
+            disabled={loading}
+            className="w-60 rounded-full py-2 items-center justify-center bg-[#6225AC] mb-8 disabled:opacity-60 border border-white"
+          >
+            <Text className="text-[#ffffff] font-bold text-base">
+              {loading? "Entrando..." : "Entrar"}
+            </Text>
+          </Pressable>
 
-      <Pressable
-        onPress={() => router.push("/cadastrar")}
-        className="w-full rounded-xl px-4 py-3 items-center justify-center bg-green-600 dark:bg-green-700"
-      >
-        <Text className="text-white font-semibold">Cadastrar</Text>
-      </Pressable>
-    </View>
+          <Text className="text-[#ffffff]/90 text-base mb-4">Não possui uma conta?</Text>
+          <Pressable
+            onPress={() => router.push("/cadastrar")}
+            style={{ backgroundColor: '#EBEDD8' }}
+            className="w-60 rounded-full py-2 items-center mb-3 justify-center"
+          >
+            <Text className="text-[#313233] font-bold text-base">Cadastre-se aqui</Text>
+          </Pressable>
+
+        </KeyboardAvoidingView>
+      </SafeAreaView>
+    </ImageBackground>
   );
 }
+
