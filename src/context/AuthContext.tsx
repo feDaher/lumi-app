@@ -4,7 +4,6 @@ import { AUTH_KEY } from '@/src/env';
 
 type AppUser = { email: string; password: string };
 
-
 type AuthContextType = {
   token: string | null;
   isLoading: boolean;
