@@ -53,7 +53,7 @@ export default function Cadastrar() {
       await SecureStore.setItemAsync("user", JSON.stringify(newUser));
 
       Alert.alert("Sucesso", "Usuário cadastrado!");
-      router.replace("/");
+      router.replace("/login");
     } catch (e: any) {
       Alert.alert("Erro", e?.message ?? "Falha no cadastro");
     } finally {
@@ -123,6 +123,7 @@ export default function Cadastrar() {
               keyboardType="numeric"
               value={cpf}
               onChangeText={(text) => setCpf(maskCPF(text))}
+              maxLength={14}
             />
 
             <Input
