@@ -1,5 +1,10 @@
 import { useState } from "react";
+<<<<<<< HEAD
 import { View, Text, Pressable, Alert, Image, SafeAreaView, KeyboardAvoidingView, Platform, ImageBackground, TouchableWithoutFeedback, Keyboard } from "react-native";import { useAuth } from "@/src/context/AuthContext";
+=======
+import { View, Text, Pressable, Alert, Image, SafeAreaView, KeyboardAvoidingView, Platform, ImageBackground } from "react-native";
+import { useAuth } from "@/src/context/AuthContext";
+>>>>>>> a2027e95d160350004174f4f73ae049484e89d1c
 import { Stack, router } from "expo-router";
 import Input from "../components/Input";
 import { Feather } from '@expo/vector-icons';
@@ -25,7 +30,11 @@ export default function Login() {
   return (
     <ImageBackground
       source={require('@/assets/fundo.png')} 
+<<<<<<< HEAD
       resizeMode="cover"
+=======
+      resizeMode="cover" 
+>>>>>>> a2027e95d160350004174f4f73ae049484e89d1c
       className="flex-1"
     >
       <SafeAreaView className="flex-1">
@@ -35,6 +44,7 @@ export default function Login() {
         >
           <Stack.Screen options={{ headerShown: false }} />
 
+<<<<<<< HEAD
        <Pressable onPress={() => router.replace('/home')} className="absolute top-3 left-4 p-3">
              <Feather name="arrow-left" size={28} color="#ffffff" />
           </Pressable>
@@ -42,6 +52,11 @@ export default function Login() {
           <Image
             source={require('@/assets/logo1.png')}
             className="w-60 h-60 mb-12"
+=======
+          <Image
+            source={require('@/src/assets/lumi-logo.png')} 
+            className="w-40 h-40 mb-10"
+>>>>>>> a2027e95d160350004174f4f73ae049484e89d1c
             resizeMode="contain"
           />
 
@@ -63,7 +78,11 @@ export default function Login() {
             <Text className="text-[#ffffff] text-base mb-2 ml-4">Senha</Text>
             <View style={{ backgroundColor: '#EBEDD8' }} className="flex-row items-center w-full rounded-2xl px-6">
               <Input
+<<<<<<< HEAD
                 className="flex-1 py-4 text-[#313233]"
+=======
+                className="flex-1 py-4 text-black"
+>>>>>>> a2027e95d160350004174f4f73ae049484e89d1c
                 placeholder="senha"
                 placeholderTextColor="#a1a1aa"
                 secureTextEntry={!isPasswordVisible}
@@ -71,7 +90,11 @@ export default function Login() {
                 onChangeText={setPwd}
               />
               <Pressable onPress={() => setPasswordVisible(!isPasswordVisible)}>
+<<<<<<< HEAD
                 <Feather name={isPasswordVisible? "eye" : "eye-off"} size={24} color="#313233" />
+=======
+                <Feather name={isPasswordVisible? "eye" : "eye-off"} size={24} color="gray" />
+>>>>>>> a2027e95d160350004174f4f73ae049484e89d1c
               </Pressable>
             </View>
           </View>
@@ -87,7 +110,11 @@ export default function Login() {
             </Text>
           </Pressable>
 
+<<<<<<< HEAD
           <Text className="text-[#ffffff]/90 text-base mb-4">Não possui uma conta?</Text>
+=======
+          <Text className="text-white/90 text-base mb-4">Não possui uma conta?</Text>
+>>>>>>> a2027e95d160350004174f4f73ae049484e89d1c
           <Pressable
             onPress={() => router.push("/cadastrar")}
             style={{ backgroundColor: '#EBEDD8' }}
@@ -102,3 +129,4 @@ export default function Login() {
     </ImageBackground>
   );
 }
+
