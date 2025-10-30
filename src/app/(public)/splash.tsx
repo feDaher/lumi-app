@@ -45,14 +45,14 @@ export default function Index() {
 
   return (
     <ImageBackground
-      source={require("../../assets/fundo.png")}
+      source={require("../../../assets/fundo.png")}
       style={styles.fundo}
       resizeMode="cover"
       onLoadEnd={() => setIsReady(true)}
       onLayout={onLayoutRootView}
     >
     <Animated.Image
-      source={require("../../assets/logo.png")}
+      source={require("../../../assets/logo.png")}
       style={[styles.logo, { transform: [{ scale: scaleAnim }] }]}
       resizeMode="contain"
     />
