@@ -6,15 +6,16 @@ import  uuid  from "react-native-uuid";
 import Input from "../components/Input";
 import { isValidEmail, maskCPF }  from "../../utils";
 import { Feather } from "@expo/vector-icons";
+import { sigUp  } from "@/src/services/api";
 
 export default function Cadastrar() {
-  const [username, setUsername] = useState<string>('');
   const [fullName, setFullName] = useState<string>('');
   const [cpf, setCpf] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [senha, setSenha] = useState<string>('');
   const [confirmSenha, setConfirmSenha] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loadingCad, setLoadingCad] = useState<boolean>(false);
+  const [loadingCan, setLoadingCan] = useState<boolean>(false);
   const [showPwd, setShowPwd] = useState(false);
   const [showPwdConfirm, setShowPwdConfirm] = useState(false);
 
@@ -39,25 +40,28 @@ export default function Cadastrar() {
 
 
     try {
-      setLoading(true);
+      setLoadingCad(true);
 
-      const newUser = {
-        id: uuid.v4(),
-        username,
-        fullName,
-        cpf: cleanCpf,
-        email,
-        senha,
+      const apiData = {
+          name: fullName,
+          cpf: cpf,
+          email: email,
+          password: senha,
       };
 
-      await SecureStore.setItemAsync("user", JSON.stringify(newUser));
+      const { user, token } = await sigUp(apiData.name, apiData.cpf, apiData.email, apiData.password);
+
+      await SecureStore.setItemAsync("token", token);
 
       Alert.alert("Sucesso", "Usuário cadastrado!");
       router.replace("/login");
-    } catch (e: any) {
-      Alert.alert("Erro", e?.message ?? "Falha no cadastro");
+
+    } catch (error: any) {
+      console.error(error)
+      const errorMessage = error.response?.data?.message || "Falha no cadastro. Tente novamente.";
+      Alert.alert("Error", errorMessage);
     } finally {
-      setLoading(false);
+      setLoadingCad(false);
     }
   };
 
@@ -135,7 +139,7 @@ export default function Cadastrar() {
               onChangeText={setEmail}
             />
 
-            <View className="w-full bg-white border-zinc-300 rounded-xl px-2 py-1 mb-6">
+            <View className="w-full bg-white border-zinc-300 rounded-xl px-2 py-3 mb-6">
               <Input
                 placeholder="Crie sua senha"
                 autoCapitalize="none"
@@ -155,7 +159,7 @@ export default function Cadastrar() {
               </Pressable>
             </View>
           
-            <View className="w-full bg-white border-zinc-300 rounded-xl px-2 py-1 mb-10">
+            <View className="w-full bg-white border-zinc-300 rounded-xl px-2 py-3 mb-10">
               <Input
                 placeholder="Repita sua senha"
                 autoCapitalize="none"
@@ -175,21 +179,21 @@ export default function Cadastrar() {
 
             <TouchableOpacity
               onPress={handleCadastro}
-              disabled={loading}
+              disabled={loadingCad}
               className="w-32 rounded-xl px-1 py-3 items-center justify-center bg-white mb-6 disabled:opacity-60 self-center shadow-md"
             >
               <Text className="text-black font-semibold">
-                {loading ? "Cadastrando..." : "Cadastrar"}
+                {loadingCad ? "Cadastrando..." : "Cadastrar"}
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
               onPress={() => router.back()}
-              disabled={loading}
+              disabled={loadingCan}
               className="w-32 rounded-xl px-1 py-3 items-center justify-center mb-6 disabled:opacity-60 self-center"
               >
                 <Text className="text-black font-semibold">
-                  {loading ? "Cancelando..." : "Cancelar"}
+                  {loadingCan ? "Cancelando..." : "Cancelar"}
                 </Text>
               </TouchableOpacity>
 
