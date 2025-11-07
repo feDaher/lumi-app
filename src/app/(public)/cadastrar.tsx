@@ -6,7 +6,7 @@ import  uuid  from "react-native-uuid";
 import Input from "../components/Input";
 import { isValidEmail, maskCPF }  from "../../utils";
 import { Feather } from "@expo/vector-icons";
-import { sigUp  } from "@/src/services/api";
+import { signUp } from "@/src/services/signup";
 
 export default function Cadastrar() {
   const [fullName, setFullName] = useState<string>('');
@@ -43,13 +43,13 @@ export default function Cadastrar() {
       setLoadingCad(true);
 
       const apiData = {
-          name: fullName,
-          cpf: cpf,
-          email: email,
-          password: senha,
+        name: fullName,
+        cpf: cpf,
+        email: email,
+        password: senha,
       };
 
-      const { user, token } = await sigUp(apiData.name, apiData.cpf, apiData.email, apiData.password);
+      const { token } = await signUp(apiData.name, apiData.cpf, apiData.email, apiData.password);
 
       await SecureStore.setItemAsync("token", token);
 
