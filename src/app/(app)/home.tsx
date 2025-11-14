@@ -1,64 +1,137 @@
-import { useEffect, useState } from "react";
-import { View, Text, Pressable, ActivityIndicator } from "react-native";
-import * as SecureStore from "expo-secure-store";
-import { Stack, router } from "expo-router";
-import { User } from "@/src/types";
+import React from "react";
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert, Image } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function Home() {
-    const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-
-   useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const userData = await SecureStore.getItemAsync("user");
-        if (userData) {
-          setUser(JSON.parse(userData));
-        }
-      } catch (e) {
-        console.log("Erro ao carregar usuário", e);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadUser();
-  }, []);
-
-  const handleLogout = async () => {
-    await SecureStore.deleteItemAsync("user");
-    router.replace("/");
+  const handleAlert = () => {
+    Alert.alert("⚠️ Alerta acionado!", "Sua localização foi enviada!");
   };
 
-  if (loading) {
-    return (
-      <View className="flex-1 items-center justify-center">
-        <ActivityIndicator size="large" color="#16a34a" />
-      </View>
-    );
-  }
-
   return (
-    <View className="flex-1 bg-white px-6 pt-12">
-      <Stack.Screen options={{ title: "Início", headerShown: false }} />
+    <View style={styles.container}>
+      {/* Topo */}
+      <View style={styles.header}>
+        <Text style={styles.headerText}>Olá!</Text>
+      </View>
 
-      <Text className="text-2xl font-bold mb-4">
-        Bem-vindo {user ? `, ${user.username}` : ""}!
-      </Text>
+      {/* Campo de localização */}
+      <View style={styles.locationContainer}>
+        <TextInput
+          style={styles.locationInput}
+          placeholder="sua localização"
+          placeholderTextColor="#aaa"
+        />
+        <Ionicons name="location-outline" size={22} color="#ff69b4" style={styles.locationIcon} />
+      </View>
 
-      <Pressable
-         onPress={() => router.push("/settings")}
-         className="w-full rounded-xl px-4 py-3 items-center justify-center bg-gray-800 mb-4">
-      <Text className="text-white font-semibold">Configurações</Text>
-     </Pressable>
+      {/* Botão vermelho central */}
+      <TouchableOpacity style={styles.alertButton} onPress={handleAlert}>
+        <Text style={styles.alertText}>ACIONAR ALERTA!</Text>
+      </TouchableOpacity>
 
+      {/* Barra inferior */}
+      <View style={styles.footer}>
+        <View style={styles.footerItem}>
+          <Ionicons name="home" size={22} color="#fff" />
+          <Text style={styles.footerText}>Início</Text>
+        </View>
 
-      <Pressable
-        onPress={handleLogout}
-        className="w-full rounded-xl px-4 py-3 items-center justify-center bg-red-600"
-      >
-        <Text className="text-white font-semibold">Sair</Text>
-      </Pressable>
+        <View style={styles.footerItem}>
+          <Ionicons name="alert-circle" size={22} color="#fff" />
+          <Text style={styles.footerText}>Avisos</Text>
+        </View>
+
+        <View style={styles.footerItem}>
+          <Ionicons name="call" size={22} color="#fff" />
+          <Text style={styles.footerText}>Contatos</Text>
+        </View>
+
+        <View style={styles.footerItem}>
+          <Ionicons name="information-circle" size={22} color="#fff" />
+          <Text style={styles.footerText}>Informações</Text>
+        </View>
+
+        <View style={styles.footerItem}>
+          <Ionicons name="settings" size={22} color="#fff" />
+          <Text style={styles.footerText}>Perfil</Text>
+        </View>
+      </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#fff4ef",
+    alignItems: "center",
+    justifyContent: "flex-start",
+  },
+  header: {
+    backgroundColor: "#ff69b4",
+    width: "100%",
+    paddingVertical: 15,
+    alignItems: "center",
+    borderBottomLeftRadius: 15,
+    borderBottomRightRadius: 15,
+  },
+  headerText: {
+    color: "#fff",
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  locationContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#fff",
+    borderRadius: 30,
+    marginTop: 20,
+    width: "85%",
+    paddingHorizontal: 15,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 3,
+  },
+  locationInput: {
+    flex: 1,
+    height: 45,
+    color: "#333",
+  },
+  locationIcon: {
+    marginLeft: 8,
+  },
+  alertButton: {
+    backgroundColor: "red",
+    borderRadius: 100,
+    width: 180,
+    height: 180,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 50,
+  },
+  alertText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 18,
+    textAlign: "center",
+  },
+  footer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    backgroundColor: "#ff69b4",
+    width: "100%",
+    position: "absolute",
+    bottom: 0,
+    paddingVertical: 10,
+  },
+  footerItem: {
+    alignItems: "center",
+  },
+  footerText: {
+    color: "#fff",
+    fontSize: 12,
+    marginTop: 3,
+  },
+});
