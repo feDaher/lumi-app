@@ -1,137 +1,143 @@
-import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert, Image } from "react-native";
+import { View, Text, TouchableOpacity, SafeAreaView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import * as Location from "expo-location";
+import { useEffect, useState } from "react";
+import ModalConfirm, { ConfirmOption } from "../components/ModalConfirm"; 
+import ModalSuccess from "../components/ModalSuccess";
+import { AlertButton } from "../components/AlertButton";
+
+const alertOptions: ConfirmOption[] = [
+  {
+    id: "send-location",
+    label: "Enviar sua localização.",
+    icon: "location-sharp",
+    defaultChecked: true,
+    locked: true,
+  },
+  {
+    id: "alert-emergency-contact",
+    label: "Alertar seu contato de emergência.",
+    icon: "person-sharp",
+  },
+  {
+    id: "notify-authorities",
+    label: "Notificar autoridades próximas.",
+    icon: "car-sport-sharp",
+  },
+];
 
 export default function Home() {
+  const [locationText, setLocationText] = useState<string>("Carregando localização...");
+  const [formattedAddress, setFormattedAddress] = useState<string>("Carregando localização...");
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalSuccess, setModalSuccess] = useState(false)
+  const [showFullAddress, setShowFullAddress] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+
+      if (status !== "granted") {
+        setLocationText("Permissão negada");
+        return;
+      }
+
+      try {
+        const loc = await Location.getCurrentPositionAsync({});
+        const address = await Location.reverseGeocodeAsync({
+          latitude: loc.coords.latitude,
+          longitude: loc.coords.longitude,
+        });
+
+        if (address.length > 0) {
+          const a = address[0];
+          const formatted =
+            `${a.district ?? ''} - ${a.region ?? ''}`;
+
+          const formattedAddress =
+          `${a.formattedAddress ?? ''}`;
+          setFormattedAddress(formattedAddress);
+          setLocationText(formatted || "Localização encontrada");
+        } else {
+          setLocationText("Localização indisponível");
+        }
+      } catch (e) {
+        setLocationText("Erro ao buscar localização");
+      }
+    })();
+  }, []);
+
   const handleAlert = () => {
-    Alert.alert("⚠️ Alerta acionado!", "Sua localização foi enviada!");
+    setModalVisible(true);
+  };
+
+  const handleConfirmAlert = (selectedIds: string[]) => {
+    setModalVisible(false);
+
+    console.log("ALERTA CONFIRMADO!");
+    console.log("Opções selecionadas:", selectedIds);
+
+    setTimeout(() => setModalSuccess(true), 300);
+  };
+
+  const handleCancelAlert = () => {
+    setModalVisible(false);
+  };
+
+  const handleCloseSuccess = () => {
+    setModalSuccess(false);
   };
 
   return (
-    <View style={styles.container}>
-      {/* Topo */}
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Olá!</Text>
+    <SafeAreaView className="flex-1 bg-[#fdf3ea]">
+      <View className="bg-pink w-full pt-6 pb-4 px-5 rounded-b-3xl shadow flex-row items-center justify-between">
+        <TouchableOpacity
+          onPress={() => {
+            console.log('saiu');
+          }}
+          className="items-center"
+        >
+          <Ionicons name="exit-outline" size={26} color="#fff" />
+          <Text className="text-white text-xs mt-1">sair</Text>
+        </TouchableOpacity>
+        <Text className="text-white text-xl font-bold text-center flex-1 mr-12">
+          Olá!
+        </Text>
       </View>
 
-      {/* Campo de localização */}
-      <View style={styles.locationContainer}>
-        <TextInput
-          style={styles.locationInput}
-          placeholder="sua localização"
-          placeholderTextColor="#aaa"
-        />
-        <Ionicons name="location-outline" size={22} color="#ff69b4" style={styles.locationIcon} />
-      </View>
+      <TouchableOpacity
+        onPress={() => setShowFullAddress((prev) => !prev)}
+        activeOpacity={0.8}
+        className="flex-row items-center bg-white rounded-full px-3 py-4 shadow mt-5 mx-5"
+      >
+        <Text
+          className={`flex-1 text-base text-[#ff69b4] ${
+            showFullAddress ? "text-left" : "text-center"
+          }`}
+          numberOfLines={1}
+        >
+          {showFullAddress ? formattedAddress : locationText}
+        </Text>
 
-      {/* Botão vermelho central */}
-      <TouchableOpacity style={styles.alertButton} onPress={handleAlert}>
-        <Text style={styles.alertText}>ACIONAR ALERTA!</Text>
+        <Ionicons name="location-outline" size={24} color="#ff69b4" />
       </TouchableOpacity>
 
-      {/* Barra inferior */}
-      <View style={styles.footer}>
-        <View style={styles.footerItem}>
-          <Ionicons name="home" size={22} color="#fff" />
-          <Text style={styles.footerText}>Início</Text>
-        </View>
+      <AlertButton onPress={handleAlert} />
 
-        <View style={styles.footerItem}>
-          <Ionicons name="alert-circle" size={22} color="#fff" />
-          <Text style={styles.footerText}>Avisos</Text>
-        </View>
-
-        <View style={styles.footerItem}>
-          <Ionicons name="call" size={22} color="#fff" />
-          <Text style={styles.footerText}>Contatos</Text>
-        </View>
-
-        <View style={styles.footerItem}>
-          <Ionicons name="information-circle" size={22} color="#fff" />
-          <Text style={styles.footerText}>Informações</Text>
-        </View>
-
-        <View style={styles.footerItem}>
-          <Ionicons name="settings" size={22} color="#fff" />
-          <Text style={styles.footerText}>Perfil</Text>
-        </View>
-      </View>
-    </View>
+      <ModalConfirm
+        visible={modalVisible}
+        title="Confirmação de emergência!"
+        options={alertOptions}
+        onCancel={handleCancelAlert}
+        onConfirm={handleConfirmAlert}
+      />
+      
+      <ModalSuccess
+        visible={modalSuccess}
+        title="Alerta de emergência confirmado!"
+        message="Seu alerta de emergência foi enviado com sucesso."
+        onClose={handleCloseSuccess}
+      />
+    </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff4ef",
-    alignItems: "center",
-    justifyContent: "flex-start",
-  },
-  header: {
-    backgroundColor: "#ff69b4",
-    width: "100%",
-    paddingVertical: 15,
-    alignItems: "center",
-    borderBottomLeftRadius: 15,
-    borderBottomRightRadius: 15,
-  },
-  headerText: {
-    color: "#fff",
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  locationContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    borderRadius: 30,
-    marginTop: 20,
-    width: "85%",
-    paddingHorizontal: 15,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: 2 },
-    elevation: 3,
-  },
-  locationInput: {
-    flex: 1,
-    height: 45,
-    color: "#333",
-  },
-  locationIcon: {
-    marginLeft: 8,
-  },
-  alertButton: {
-    backgroundColor: "red",
-    borderRadius: 100,
-    width: 180,
-    height: 180,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 50,
-  },
-  alertText: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 18,
-    textAlign: "center",
-  },
-  footer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
-    backgroundColor: "#ff69b4",
-    width: "100%",
-    position: "absolute",
-    bottom: 0,
-    paddingVertical: 10,
-  },
-  footerItem: {
-    alignItems: "center",
-  },
-  footerText: {
-    color: "#fff",
-    fontSize: 12,
-    marginTop: 3,
-  },
-});
