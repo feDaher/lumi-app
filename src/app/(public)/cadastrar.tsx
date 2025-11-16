@@ -44,7 +44,7 @@ export default function Cadastrar() {
 
       const apiData = {
         name: fullName,
-        cpf: cpf,
+        cpf: cleanCpf,
         email: email,
         password: senha,
       };

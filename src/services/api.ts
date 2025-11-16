@@ -13,7 +13,7 @@ async function getToken() {
 export type Api = AxiosInstance;
 
 export const api: Api = axios.create({
-  baseURL: BASE_URL,
+  baseURL: '//192.168.0.101:3333',
   timeout: 15000,
   headers: {
     "Content-Type": "application/json",
