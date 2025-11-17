@@ -4,7 +4,7 @@ import * as Location from "expo-location";
 import { useEffect, useState } from "react";
 import ModalConfirm, { ConfirmOption } from "../components/ModalConfirm"; 
 import ModalSuccess from "../components/ModalSuccess";
-import { AlertButton } from "../components/AlertButton";
+import AlertButton from "../components/AlertButton";
 
 const alertOptions: ConfirmOption[] = [
   {
