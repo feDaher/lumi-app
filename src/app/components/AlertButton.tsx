@@ -14,7 +14,7 @@ type AlertButtonProps = {
 
 const BUTTON_SIZE = 180;
 
-export function AlertButton({ onPress }: AlertButtonProps) {
+export default function AlertButton({ onPress }: AlertButtonProps) {
   const scale = useSharedValue(1);
   const wave = useSharedValue(0);
 
