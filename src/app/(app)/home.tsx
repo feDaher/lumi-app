@@ -28,7 +28,7 @@ const alertOptions: ConfirmOption[] = [
 ];
 
 export default function Home() {
-  const { signOut } = useAuth();
+  const { signOut, user } = useAuth();
   const [locationText, setLocationText] = useState<string>("Carregando localização...");
   const [formattedAddress, setFormattedAddress] = useState<string>("Carregando localização...");
   const [modalVisible, setModalVisible] = useState(false);
@@ -101,7 +101,7 @@ export default function Home() {
           <Text className="text-white text-xs mt-1">sair</Text>
         </TouchableOpacity>
         <Text className="text-white text-xl font-bold text-center flex-1 mr-12">
-          Olá!
+          Olá! {' '} {user?.name ?? ''}
         </Text>
       </View>
 
