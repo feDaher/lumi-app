@@ -101,7 +101,7 @@ export default function Home() {
           <Text className="text-white text-xs mt-1">sair</Text>
         </TouchableOpacity>
         <Text className="text-white text-xl font-bold text-center flex-1 mr-12">
-          Olá! {' '} {user?.name ?? ''}
+          Olá! {user?.name ?? ''}
         </Text>
       </View>
 
