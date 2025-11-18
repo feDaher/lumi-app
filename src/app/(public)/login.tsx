@@ -15,7 +15,7 @@ import {
 } from "react-native";
 import { useAuth } from "@/src/context/AuthContext";
 import { Stack, router } from "expo-router";
-import Input from "../components/Input";
+import Input from "../../components/Input";
 import { Feather } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useKeyboardInset } from "@/src/hooks/useKeyboardInset";
