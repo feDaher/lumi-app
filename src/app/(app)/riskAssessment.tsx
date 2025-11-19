@@ -74,8 +74,8 @@ export default function RiskAssessment() {
 
   return (
     <SafeAreaView className="flex-1 bg-[#FAF0E6]">
-      <StatusBar backgroundColor="#FF1C8D" barStyle="light-content" />
-      <View className={`flex-row items-center h-14 px-4 rounded-b-2xl bg-[#FF1C8D]`}>
+      <StatusBar backgroundColor="#ff69b4" barStyle="light-content" />
+      <View className="bg-[#ff69b4] w-full pt-6 pb-5 px-5 rounded-b-3xl shadow flex-row items-center justify-between">
         <TouchableOpacity onPress={() => router.back()} className="justify-center items-center">
           <View className="w-9 h-9 rounded-full bg-white justify-center items-center">
             <Ionicons name="chevron-back" size={22} color="#FF1C8D" />

@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useEffect, useState, useMemo } from "react";
+import { useRouter } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import { AUTH_KEY } from "@/src/env";
 import { signIn as signInService } from "@/src/services/signIn";
@@ -15,18 +16,27 @@ type AuthContextType = {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+const USER_KEY = "user-data";
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     (async () => {
       try {
-        const stored = await SecureStore.getItemAsync(AUTH_KEY);
-        if (stored) {
-          setToken(stored);
-          api.defaults.headers.common["Authorization"] = `Bearer ${stored}`;
+        const storedToken = await SecureStore.getItemAsync(AUTH_KEY);
+        const storedUser = await SecureStore.getItemAsync(USER_KEY);
+
+        if (storedToken) {
+          setToken(storedToken);
+          api.defaults.headers.common["Authorization"] = `Bearer ${storedToken}`;
+        }
+
+        if (storedUser) {
+          setUser(JSON.parse(storedUser));
         }
       } finally {
         setIsLoading(false);
@@ -40,13 +50,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const data = await signInService(email.trim(), password);
 
-      if (!data?.token) {
+      if (!data?.token || !data?.user) {
         throw new Error("Resposta inesperada do servidor");
       }
 
       await SecureStore.setItemAsync(AUTH_KEY, data.token);
+      await SecureStore.setItemAsync(USER_KEY, JSON.stringify(data.user));
+
       setToken(data.token);
       setUser(data.user);
+
       api.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
     } catch (error: any) {
       throw new Error(error?.response?.data?.message || "Falha ao fazer login");
@@ -55,9 +68,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     await SecureStore.deleteItemAsync(AUTH_KEY);
+    await SecureStore.deleteItemAsync(USER_KEY);
+
     delete api.defaults.headers.common["Authorization"];
+
     setToken(null);
     setUser(null);
+
+    router.replace("/(public)/login");
   };
 
   const value = useMemo(

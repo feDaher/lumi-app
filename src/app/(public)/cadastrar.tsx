@@ -57,7 +57,6 @@ export default function Cadastrar() {
       router.replace("/login");
 
     } catch (error: any) {
-      console.error(error)
       const errorMessage = error.response?.data?.message || "Falha no cadastro. Tente novamente.";
       Alert.alert("Error", errorMessage);
     } finally {
