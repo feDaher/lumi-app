@@ -76,7 +76,6 @@ export default function Home() {
   const handleConfirmAlert = (selectedIds: string[]) => {
     setModalVisible(false);
 
-    console.log("ALERTA CONFIRMADO!");
     console.log("Opções selecionadas:", selectedIds);
 
     setTimeout(() => setModalSuccess(true), 300);
