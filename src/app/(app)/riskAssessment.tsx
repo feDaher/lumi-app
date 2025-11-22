@@ -39,21 +39,43 @@ export default function RiskAssessment() {
     Animated.timing(slideAnim, { toValue: 0, duration: 150, useNativeDriver: false }).start(() => setActiveDropdown(null));
   };
 
-  const handleEvaluate = () => {
-    if (Object.values(answers).some((a) => a === null)) {
-      Alert.alert("Atenção", "Por favor, responda todas as perguntas antes de avaliar.");
-      return;
-    }
+  const handleEvaluate = async () => {
+  if (Object.values(answers).some((a) => a === null)) {
+    Alert.alert("Atenção", "Por favor, responda todas as perguntas antes de avaliar.");
+    return;
+  }
 
-    const score = Object.values(answers).reduce((total, option) => total + (option?.value || 0), 0);
+  const score = Object.values(answers).reduce(
+    (total, option) => total + (option?.value || 0),
+    0
+  );
 
-    let result = "";
-    if (score <= 2) result = "Risco baixo";
-    else if (score <= 6) result = "Risco moderado";
-    else result = "Risco alto";
+  let result = "";
+  if (score <= 2) result = "Risco baixo";
+  else if (score <= 6) result = "Risco moderado";
+  else result = "Risco alto";
 
-    Alert.alert("Resultado da avaliação", result);
-  };
+  try {
+    const response = await fetch("http://10.0.2.2:3334/risk", { 
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        answers,
+        score,
+        result,
+      }),
+    });
+
+    const data = await response.json();
+
+    Alert.alert("Resultado", `Status: ${result}\n\nRegistro salvo com sucesso!`);
+  } catch (error) {
+    console.log(error);
+    Alert.alert("Erro", "Não foi possível enviar os dados para o servidor.");
+  }
+};
 
   const renderDropdown = (field: string, options: Option[]) => {
     if (activeDropdown !== field) return null;
