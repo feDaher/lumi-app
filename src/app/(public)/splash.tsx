@@ -3,8 +3,8 @@ import { Animated, ImageBackground, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 
-SplashScreen.preventAutoHideAsync();
-export default function Index() {
+// SplashScreen.preventAutoHideAsync();
+export default function Splash() {
   const router = useRouter();
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const [isReady, setIsReady] = useState(false);

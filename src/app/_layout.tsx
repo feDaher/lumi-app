@@ -1,9 +1,8 @@
-import { Slot, useRouter, useSegments } from "expo-router";
-import { useEffect, useState } from "react";
-import { ActivityIndicator, View, Pressable } from "react-native";
+import { Slot } from "expo-router";
+import { AuthProvider } from "@/src/context/AuthContext";
 import { StatusBar } from "expo-status-bar";
-import { AuthProvider, useAuth } from "@/src/context/AuthContext";
 import { useThemePersisted } from "@/src/hooks/useThemePersisted";
+import { Pressable } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { MessageProvider } from "../context/MessageContext";
 import { Toast } from "@/src/app/components/Toast";
@@ -45,12 +44,12 @@ function RootNavigationGuard() {
 }
 
 export default function RootLayout() {
-  const { isReady, current, setTheme, toggleTheme } = useThemePersisted();
+  const { isReady, current, toggleTheme } = useThemePersisted();
 
   if (!isReady) return null;
 
   return (
-    <>
+    <AuthProvider>
       <StatusBar style={current === "dark" ? "light" : "dark"} />
 
       <Pressable

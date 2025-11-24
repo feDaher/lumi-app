@@ -2,9 +2,10 @@ import { View, Text, TouchableOpacity, SafeAreaView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as Location from "expo-location";
 import { useEffect, useState } from "react";
-import ModalConfirm, { ConfirmOption } from "../components/ModalConfirm"; 
-import ModalSuccess from "../components/ModalSuccess";
-import { AlertButton } from "../components/AlertButton";
+import ModalConfirm, { ConfirmOption } from "../../components/ModalConfirm"; 
+import ModalSuccess from "../../components/ModalSuccess";
+import AlertButton from "../../components/AlertButton";
+import { useAuth } from "@/src/context/AuthContext";
 
 const alertOptions: ConfirmOption[] = [
   {
@@ -27,6 +28,7 @@ const alertOptions: ConfirmOption[] = [
 ];
 
 export default function Home() {
+  const { signOut, user } = useAuth();
   const [locationText, setLocationText] = useState<string>("Carregando localização...");
   const [formattedAddress, setFormattedAddress] = useState<string>("Carregando localização...");
   const [modalVisible, setModalVisible] = useState(false);
@@ -74,7 +76,6 @@ export default function Home() {
   const handleConfirmAlert = (selectedIds: string[]) => {
     setModalVisible(false);
 
-    console.log("ALERTA CONFIRMADO!");
     console.log("Opções selecionadas:", selectedIds);
 
     setTimeout(() => setModalSuccess(true), 300);
@@ -90,18 +91,16 @@ export default function Home() {
 
   return (
     <SafeAreaView className="flex-1 bg-[#fdf3ea]">
-      <View className="bg-pink w-full pt-6 pb-4 px-5 rounded-b-3xl shadow flex-row items-center justify-between">
+      <View className="bg-[#ff69b4] w-full pt-6 pb-3 px-5 rounded-b-3xl shadow flex-row items-center justify-between">
         <TouchableOpacity
-          onPress={() => {
-            console.log('saiu');
-          }}
+          onPress={() => signOut()}
           className="items-center"
         >
           <Ionicons name="exit-outline" size={26} color="#fff" />
           <Text className="text-white text-xs mt-1">sair</Text>
         </TouchableOpacity>
         <Text className="text-white text-xl font-bold text-center flex-1 mr-12">
-          Olá!
+          Olá! {user?.name ?? ''}
         </Text>
       </View>
 
