@@ -7,10 +7,8 @@ export type Task = {
 
 
 export type User = {
-  id: string;
-  username: string;
-  fullName: string;
-  cpf: string;
-  email: string;
-  senha: string;
+  id?: string;
+  name?: string;
+  cpf?: string;
+  email?: string;
 };

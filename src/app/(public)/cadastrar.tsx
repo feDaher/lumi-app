@@ -3,7 +3,7 @@ import { View, Text, Alert, Pressable, ScrollView, ImageBackground, Image, Keybo
 import { Stack, router } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import  uuid  from "react-native-uuid";
-import Input from "../components/Input";
+import Input from "../../components/Input";
 import { isValidEmail, maskCPF }  from "../../utils";
 import { Feather } from "@expo/vector-icons";
 import { signUp } from "@/src/services/signup";
@@ -57,7 +57,6 @@ export default function Cadastrar() {
       router.replace("/login");
 
     } catch (error: any) {
-      console.error(error)
       const errorMessage = error.response?.data?.message || "Falha no cadastro. Tente novamente.";
       Alert.alert("Error", errorMessage);
     } finally {
