@@ -5,6 +5,8 @@ import { StatusBar } from "expo-status-bar";
 import { AuthProvider, useAuth } from "@/src/context/AuthContext";
 import { useThemePersisted } from "@/src/hooks/useThemePersisted";
 import { Feather } from "@expo/vector-icons";
+import { MessageProvider } from "../context/MessageContext";
+import { Toast } from "@/src/app/components/Toast";
 
 function RootNavigationGuard() {
   const { token, isLoading } = useAuth();
@@ -31,7 +33,6 @@ function RootNavigationGuard() {
     setReady(true);
   }, [token, isLoading, segments, router]);
 
-
   if (isLoading || !ready) {
     return (
       <View className="flex-1 items-center justify-center bg-light dark:bg-dark">
@@ -52,18 +53,22 @@ export default function RootLayout() {
     <>
       <StatusBar style={current === "dark" ? "light" : "dark"} />
 
-      <Pressable onPress={toggleTheme} className="absolute top-12 right-6 p-2 rounded-full bg-zinc-200 dark:bg-accent z-50">
-        {
-          current === "dark" 
-            ? 
-              <Feather name="sun" size={22} color="#facc15" /> 
-            : 
-              <Feather name="moon" size={22} color="#0f172a" />
-        }
+      <Pressable
+        onPress={toggleTheme}
+        className="absolute top-12 right-6 p-2 rounded-full bg-zinc-200 dark:bg-accent z-50"
+      >
+        {current === "dark" ? (
+          <Feather name="sun" size={22} color="#facc15" />
+        ) : (
+          <Feather name="moon" size={22} color="#0f172a" />
+        )}
       </Pressable>
 
       <AuthProvider>
-        <RootNavigationGuard />
+        <MessageProvider>
+          <Toast />
+          <RootNavigationGuard />
+        </MessageProvider>
       </AuthProvider>
     </>
   );
