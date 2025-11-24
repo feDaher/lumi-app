@@ -8,13 +8,12 @@ import {
 } from "react-native";
 import { useMessage } from "@/src/context/MessageContext";
 import { Ionicons } from "@expo/vector-icons";
-import { styled } from "nativewind";
 
 type MessageType = "success" | "error" | "warning" | "info";
 
-const AnimatedView = Animated.createAnimatedComponent(styled(View));
+const AnimatedView = Animated.createAnimatedComponent(View);
 
-export function Toast() {
+export default function Toast() {
   const { message, clearMessage } = useMessage();
   const [fadeAnim] = useState(new Animated.Value(0));
 
@@ -42,7 +41,6 @@ export function Toast() {
     }).start();
 
     const timer = setTimeout(() => closeToast(), 3000);
-
     return () => clearTimeout(timer);
   }, [message]);
 
@@ -61,7 +59,7 @@ export function Toast() {
       className="absolute self-center min-w-[90%] max-w-[90%] bg-white py-3 px-4 rounded-xl flex-row items-center shadow-md border border-gray-200"
       style={{
         opacity: fadeAnim,
-        borderLeftColor: colors[message.type as MessageType],
+        borderLeftColor: colors[message.type],
         borderLeftWidth: 8,
         top: (StatusBar.currentHeight || 0) + 10,
         zIndex: 999,
@@ -70,9 +68,9 @@ export function Toast() {
     >
       <View className="mr-4">
         <Ionicons
-          name={icons[message.type as MessageType]}
+          name={icons[message.type]}
           size={36}
-          color={colors[message.type as MessageType]}
+          color={colors[message.type]}
         />
       </View>
 

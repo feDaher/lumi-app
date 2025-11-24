@@ -19,9 +19,11 @@ import Input from "../../components/Input";
 import { Feather } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useKeyboardInset } from "@/src/hooks/useKeyboardInset";
+import { useMessage } from "@/src/context/MessageContext";
 
 export default function Login() {
   const { signIn } = useAuth();
+  const { showMessage } = useMessage();
   const [email, setEmail] = useState<string>('');
   const [pwd, setPwd] = useState<string>('');
   const [loading, setLoading] = useState(false);
@@ -34,10 +36,28 @@ export default function Login() {
   const handleLogin = async () => {
     try {
       setLoading(true);
+      if (!email.trim()) {
+        showMessage({ type: "warning", text: "Informe o e-mail" });
+        return;
+      }
+
+      if (!pwd) {
+        showMessage({ type: "warning", text: "Informe a senha" });
+        return;
+      }
       await signIn(email.trim(), pwd);
-    } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : 'Falha no login';
-      Alert.alert('Erro', msg);
+      showMessage({
+        type: "success",
+        text: "Bem-vindo de volta 👋",
+      });
+    } catch (e) {
+      const msg =
+        e instanceof Error ? e.message : "Falha no login, tente novamente";
+
+      showMessage({
+        text: msg,
+        type: "error",
+      });
     } finally {
       setLoading(false);
     }
