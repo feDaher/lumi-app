@@ -20,7 +20,6 @@ export function Header({
   return (
     <View className="bg-[#ff69b4] w-full pt-6 pb-4 px-5 rounded-b-3xl shadow flex-row items-center justify-between">
 
-      {/* LEFT SLOT */}
       {left ? (
         <View className="w-14 justify-center items-center">{left}</View>
       ) : showBack ? (
@@ -36,7 +35,6 @@ export function Header({
         <View className="w-10" />
       )}
 
-      {/* TITLE */}
       <Text
         numberOfLines={1}
         className="text-white text-xl font-bold text-center flex-1 px-2"
@@ -44,7 +42,6 @@ export function Header({
         {title}
       </Text>
 
-      {/* RIGHT SLOT */}
       {right ? (
         <View className="w-14 justify-center items-center">
           {right}
