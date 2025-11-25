@@ -56,7 +56,7 @@ export default function RootLayout() {
 
         <Pressable
           onPress={toggleTheme}
-          className="absolute top-12 right-6 p-2 rounded-full bg-zinc-200 dark:bg-accent z-50"
+          className="absolute top-9 right-6 p-2 rounded-full bg-zinc-200 dark:bg-accent z-50"
         >
           {current === "dark" ? (
             <Feather name="sun" size={22} color="#facc15" />

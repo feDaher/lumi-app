@@ -30,27 +30,36 @@ export default function AppTabs() {
         }}
       />
 
-      {/* <Tabs.Screen
-        name="contatos"
+      <Tabs.Screen
+        name="contacts"
         options={{
           title: "Contatos",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="call" size={size} color={color} />
           ),
         }}
-      /> */}
+      />
 
       <Tabs.Screen
         name="riskAssessment"
         options={{
           title: "Teste de Risco",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="information-circle" size={size} color={color} />
+            <Ionicons name="alert" size={size} color={color} />
           ),
         }}
       />
 
       <Tabs.Screen
+        name="informative"
+        options={{
+          title: "Informativos",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="information-circle" size={size} color={color} />
+          ),
+        }}
+      />
+      {/* <Tabs.Screen
         name="settings"
         options={{
           title: "Configurações",
@@ -58,7 +67,7 @@ export default function AppTabs() {
             <Ionicons name="settings" size={size} color={color} />
           ),
         }}
-      />
+      /> */}
     </Tabs>
   );
 }

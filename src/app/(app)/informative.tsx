@@ -1,7 +1,7 @@
 import { View, Text, Linking, ScrollView, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-export default function Informativo() {
+export default function Informative() {
   function abrirWhatsApp() {
     Linking.openURL("https://wa.me/5531994100807");
   }
