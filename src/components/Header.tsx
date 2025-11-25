@@ -5,8 +5,8 @@ import { useRouter } from "expo-router";
 interface HeaderProps {
   title?: string;
   showBack?: boolean;
-  left?: React.ReactNode;   // Slot Left
-  right?: React.ReactNode;  // Slot Right
+  left?: React.ReactNode;
+  right?: React.ReactNode;
 }
 
 export function Header({
