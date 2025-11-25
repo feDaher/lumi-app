@@ -1,10 +1,10 @@
 import axios, { AxiosError, AxiosInstance, AxiosResponse } from "axios";
-import { BASE_URL } from "../env";
+import { AUTH_KEY, BASE_URL } from "../env";
 import * as SecureStore from "expo-secure-store";
 
 async function getToken() {
   try {
-    return await SecureStore.getItemAsync("token");
+    return await SecureStore.getItemAsync(AUTH_KEY);
   } catch {
     return null;
   }
@@ -20,63 +20,73 @@ export const api: Api = axios.create({
   },
 });
 
+export async function post<T>(url: string, body?: any): Promise<T> {
+  return api.post(url, body) as unknown as T;
+}
 
-// api.interceptors.request.use(
-//   async (config) => {
-//     const token = await getToken();
-//     if (token) {
-//       config.headers = config.headers ?? {};
-//       config.headers.Authorization = `Bearer ${token}`;
-//     }
+export async function get<T>(url: string): Promise<T> {
+  return api.get(url) as unknown as T;
+}
 
-//     (config as any).meta = { startedAt: Date.now() };
+/**
+ * REQUEST INTERCEPTOR
+ * - injeta Authorization: Bearer <token>
+ * - registra metadata de request
+ */
+api.interceptors.request.use(
+  async (config) => {
+    const token = await getToken();
+    if (token) {
+      config.headers = config.headers ?? {};
+      config.headers.Authorization = `Bearer ${token}`;
+    }
 
-//     return config;
-//   },
-//   (error: AxiosError) => {
-//     // TODO: enviar log do request que falhou
-//     return Promise.reject(error);
-//   }
-// );
+    (config as any).meta = { startedAt: Date.now() };
 
-// /**
-//  * RESPONSE INTERCEPTOR
-//  * - Desembrulha `response.data`
-//  * - Normaliza erros
-//  * - (gancho) retry, refresh token, métricas, toasts, etc.
-//  */
-// api.interceptors.response.use(
-//   (response: AxiosResponse) => {
-//     // (opcional) medir duração
-//     const started = (response.config as any)?.meta?.startedAt;
-//     if (started) {
-//       const ms = Date.now() - started;
-//       // TODO: registrar métricas (ex.: console.log(`[API] ${response.config.url} ${ms}ms`))
-//     }
+    return config;
+  },
+  (error: AxiosError) => Promise.reject(error)
+);
 
-//     return response.data; // <- retorna só o corpo no app inteiro
-//   },
-//   async (error: AxiosError<any>) => {
-//     const status = error.response?.status;
+/**
+ * RESPONSE INTERCEPTOR
+ * - retorna somente response.data
+ * - normaliza erros
+ */
+api.interceptors.response.use(
+  (response: AxiosResponse) => {
+    // métrica simples
+    const started = (response.config as any)?.meta?.startedAt;
+    if (started) {
+      const ms = Date.now() - started;
+      // console.log(`[API] ${response.config.url} (${ms}ms)`);
+    }
 
-//     // 401: (gancho) tentar refresh token ou redirecionar para login
-//     if (status === 401) {
-//       // TODO: refresh token (ex.: chamar /auth/refresh)
-//       // TODO: se falhar, limpar credenciais e navegar pro /login
-//     }
+    // 🔥 retorna direto o payload
+    return response.data;
+  },
+  async (error: AxiosError<any>) => {
+    const status = error.response?.status;
+    const message =
+      error.response?.data?.message ||
+      error.response?.data?.error ||
+      "Falha na solicitação.";
 
-//     // (gancho) retry de idempotentes (GET) em erro de rede
-//     // if (error.code === "ECONNABORTED" || !error.response) { ... }
+    // 401 → sessão expirada
+    if (status === 401) {
+      // TODO: refresh token ou deslogar
+      // await SecureStore.deleteItemAsync('token');
+      // router.replace("/login");
+    }
 
-//     // Normalização mínima de erro para o app
-//     const normalized = {
-//       status,
-//       message: error.response?.data?.message || "Falha na solicitação.",
-//       data: error.response?.data,
-//       url: error.config?.url,
-//       method: error.config?.method,
-//     };
+    const normalized = {
+      status,
+      message,
+      url: error.config?.url,
+      method: error.config?.method,
+      payload: error.response?.data,
+    };
 
-//     return Promise.reject(normalized);
-//   }
-// );
+    return Promise.reject(normalized);
+  }
+);

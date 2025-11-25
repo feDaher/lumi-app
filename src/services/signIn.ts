@@ -1,11 +1,6 @@
-import { api } from "./api"
+import { post } from "./api";
+import { AuthResponse } from "../types";
 
-export async function signIn(email: string, password: string) {
-
-    const response = await api.post('/auth/signin', {
-        email,
-        password,
-    });
-
-    return response.data;
+export function signIn(email: string, password: string) {
+  return post<AuthResponse>("/auth/signin", { email, password });
 }
