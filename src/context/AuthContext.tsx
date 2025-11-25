@@ -44,27 +44,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     })();
   }, []);
 
-  const signIn = async (email: string, password: string) => {
-    if (!email || !password) throw new Error("Informe e-mail e senha");
-
+  async function signIn(email: string, password: string) {
     try {
-      const data = await signInService(email.trim(), password);
+      const { token, user } = await signInService(email, password);
 
-      if (!data?.token || !data?.user) {
-        throw new Error("Resposta inesperada do servidor");
-      }
+      await SecureStore.setItemAsync(AUTH_KEY, token);
+      await SecureStore.setItemAsync(USER_KEY, JSON.stringify(user));
 
-      await SecureStore.setItemAsync(AUTH_KEY, data.token);
-      await SecureStore.setItemAsync(USER_KEY, JSON.stringify(data.user));
-
-      setToken(data.token);
-      setUser(data.user);
-
-      api.defaults.headers.common["Authorization"] = `Bearer ${data.token}`;
-    } catch (error: any) {
-      throw new Error(error?.response?.data?.message || "Falha ao fazer login");
+      setToken(token);
+      setUser(user);
+    } catch(e: any) {
+      throw new Error(e.message ?? "Falha no login");
     }
-  };
+  }
+
 
   const signOut = async () => {
     await SecureStore.deleteItemAsync(AUTH_KEY);

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -12,20 +12,15 @@ import {
   Platform,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { useMessage } from "@/src/context/MessageContext";
 import { Header } from "@/src/components/Header";
-
-interface Contact {
-  name: string;
-  phone: string;
-}
+import { ContactService } from "@/src/services/contacts";
+import { Contact } from "@/src/types";
 
 export default function Contacts() {
-  const router = useRouter();
+  const { showMessage } = useMessage();
 
-  const [contacts, setContacts] = useState<Contact[]>([
-    { name: "Maria Silva", phone: "3299999999" },
-  ]);
+  const [contacts, setContacts] = useState<Contact[]>([]);
 
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState<boolean>(false);
@@ -35,23 +30,82 @@ export default function Contacts() {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [contactToDelete, setContactToDelete] = useState<number | null>(null);
 
+  useEffect(() => {
+    loadContacts();
+  }, []);
+
+  async function loadContacts() {
+    try {
+      const list = await ContactService.list();
+      setContacts(list);
+    } catch (e) {
+      showMessage({ type: "error", text: "Erro ao carregar contatos" });
+    }
+  }
+
   const handleAdd = () => {
     setNewContactName("");
     setNewContactPhone("");
     setModalVisible(true);
   };
 
-  const handleSaveContact = () => {
-    if (newContactName && newContactPhone) {
-      setContacts((prev) => [
-        ...prev,
-        { name: newContactName, phone: newContactPhone },
-      ]);
-      setNewContactName("");
-      setNewContactPhone("");
+  async function handleSaveContact() {
+    try {
+      const cleaned = newContactPhone.replace(/\D/g, "");
+
+      const ddd = cleaned.slice(0, 2);
+      const phone = cleaned.slice(2);
+
+      await ContactService.create({
+        name: newContactName,
+        ddd,
+        phone,
+      });
+
+      showMessage({ type: "success", text: "Contato adicionado!" });
       setModalVisible(false);
+      loadContacts();
+    } catch (err) {
+      showMessage({ type: "error", text: "Erro ao adicionar contato" });
     }
-  };
+  }
+
+  async function handleUpdateContact(index: number) {
+    try {
+      const item = contacts[index];
+      const { id, name, ddd, phone } = item;
+
+      await ContactService.update(id, {
+        name,
+        ddd,
+        phone,
+      });
+
+      showMessage({ type: "success", text: "Contato atualizado!" });
+      setEditingIndex(null);
+      loadContacts();
+    } catch (err) {
+      showMessage({ type: "error", text: "Erro ao atualizar contato" });
+    }
+  }
+
+  async function handleDeleteContact() {
+    if (contactToDelete === null) return;
+
+    try {
+      const item = contacts[contactToDelete];
+
+      await ContactService.delete(item.id);
+
+      showMessage({ type: "success", text: "Contato removido!" });
+      setDeleteModalVisible(false);
+      setContactToDelete(null);
+      loadContacts();
+    } catch (err) {
+      showMessage({ type: "error", text: "Erro ao excluir" });
+    }
+  }
+
 
   const makeCall = (phone: string) => {
     const phoneNumber =
@@ -66,18 +120,22 @@ export default function Contacts() {
   };
 
   const formatPhone = (value: string) => {
-    const cleaned = value.replace(/\D/g, "");
+    const digits = value.replace(/\D/g, "").slice(0, 11);
 
-    if (cleaned.length <= 10) {
-      return cleaned
+    if (digits.length <= 10) {
+      return digits
         .replace(/(\d{2})(\d)/, "($1) $2")
         .replace(/(\d{4})(\d)/, "$1-$2");
-    } else {
-      return cleaned
-        .replace(/(\d{2})(\d)/, "($1) $2")
-        .replace(/(\d{5})(\d)/, "$1-$2");
     }
+
+    return digits
+      .replace(/(\d{2})(\d)/, "($1) $2")
+      .replace(/(\d{5})(\d)/, "$1-$2");
   };
+
+  function normalizeContactNumber(contact: Contact) {
+    return `${contact.ddd}${contact.phone}`;
+  }
 
   return (
     <SafeAreaView className="flex-1 bg-[#FAF0E6]">
@@ -159,14 +217,20 @@ export default function Contacts() {
                   className="border border-[#FF1C8D] rounded-xl px-2 py-1 mb-1 text-sm w-40"
                 />
                 <TextInput
-                  value={formatPhone(c.phone)}
+                  value={formatPhone(`${c.ddd}${c.phone}`)}
                   onChangeText={(text) => {
+                    const cleaned = text.replace(/\D/g, '');
+
                     const newContacts = [...contacts];
-                    newContacts[index].phone = formatPhone(text);
+
+                    newContacts[index].ddd = cleaned.slice(0, 2);
+                    newContacts[index].phone = cleaned.slice(2);
+
                     setContacts(newContacts);
                   }}
                   className="border border-[#FF1C8D] rounded-xl px-2 py-1 text-sm w-40"
                   keyboardType="phone-pad"
+                  maxLength={15}
                 />
               </View>
             ) : (
@@ -174,7 +238,7 @@ export default function Contacts() {
                 <Text className="text-[#971A9D] font-bold text-base ml-2">
                   {c.name}
                 </Text>
-                <Text className="text-gray-700 font-semibold">  {formatPhone(c.phone)}</Text>
+                <Text className="text-gray-700 font-semibold">  {formatPhone(normalizeContactNumber(c))}</Text>
               </View>
             )}
 
@@ -182,7 +246,7 @@ export default function Contacts() {
               <View className="flex-row items-center space-x-2 mt-7">
                 <TouchableOpacity
                   className="bg-green-500 px-4 py-1 rounded-2xl ml-2"
-                  onPress={() => setEditingIndex(null)}
+                  onPress={() => handleUpdateContact(index)}
                 >
                   <Text className="text-white font-bold text-sm">Salvar</Text>
                 </TouchableOpacity>
@@ -263,6 +327,7 @@ export default function Contacts() {
               onChangeText={(text) => setNewContactPhone(formatPhone(text))}
               keyboardType="phone-pad"
               className="border border-[#FF1C8D] rounded-xl p-3 w-full mb-5 text-sm"
+              maxLength={15}
             />
 
             <View className="flex-row justify-between w-full">
@@ -301,15 +366,7 @@ export default function Contacts() {
 
               <TouchableOpacity
                 className="bg-red-500 px-5 py-3 rounded-2xl items-center"
-                onPress={() => {
-                  if (contactToDelete !== null) {
-                    const newContacts = [...contacts];
-                    newContacts.splice(contactToDelete, 1);
-                    setContacts(newContacts);
-                  }
-                  setDeleteModalVisible(false);
-                  setContactToDelete(null);
-                }}
+                onPress={handleDeleteContact}
               >
                 <Text className="text-white font-bold">Excluir</Text>
               </TouchableOpacity>
