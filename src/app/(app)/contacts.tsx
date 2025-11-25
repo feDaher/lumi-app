@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
+import { Header } from "@/src/components/Header";
 
 interface Contact {
   name: string;
@@ -82,16 +83,7 @@ export default function Contacts() {
     <SafeAreaView className="flex-1 bg-[#FAF0E6]">
       <StatusBar backgroundColor="#FF1C8D" barStyle="light-content" />
 
-      <View className="flex-row items-center h-14 px-4 rounded-b-2xl bg-[#FF1C8D]">
-        <TouchableOpacity onPress={() => router.back()}>
-          <View className="w-9 h-9 rounded-full bg-white justify-center items-center">
-            <Ionicons name="chevron-back" size={22} color="#FF1C8D" />
-          </View>
-        </TouchableOpacity>
-        <Text className="flex-1 text-center text-white font-bold text-base -ml-8">
-          Contatos
-        </Text>
-      </View>
+      <Header title="Contatos" showBack />
 
       <ScrollView contentContainerStyle={{ padding: 16, paddingBottom: 50 }}>
         <Text className="text-[#FF1C8D] font-bold text-lg mb-2">

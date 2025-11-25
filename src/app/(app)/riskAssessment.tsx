@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, ScrollView, Alert, SafeAreaView, Platform
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { questions, Option, Question } from "../../data/questions";
+import { Header } from "@/src/components/Header";
 
 interface Answers {
   [key: string]: Option | null;
@@ -75,20 +76,7 @@ export default function RiskAssessment() {
   return (
     <SafeAreaView className="flex-1 bg-[#FAF0E6]">
       <StatusBar backgroundColor="#ff69b4" barStyle="light-content" />
-      <View className="bg-[#ff69b4] w-full pt-6 pb-5 px-5 rounded-b-3xl shadow flex-row items-center justify-between">
-      <TouchableOpacity
-        onPress={() => router.back()}
-        activeOpacity={0.7}
-        hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
-        className="w-10 h-10 rounded-full bg-white/90 shadow justify-center items-center"
-      >
-        <Ionicons name="chevron-back" size={26} color="#FF1C8D" />
-      </TouchableOpacity>
-      <Text className="text-white text-xl font-bold text-center flex-1">
-        Teste de Risco
-      </Text>
-      <View className="w-10 h-10" />
-    </View>
+      <Header title="Teste de Risco" showBack />
 
       <ScrollView className="flex-1 px-4 pt-6" contentContainerStyle={{ paddingBottom: 20 }}>
         <View className="space-y-5">

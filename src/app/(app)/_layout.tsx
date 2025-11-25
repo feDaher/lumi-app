@@ -16,8 +16,8 @@ export default function AppTabs() {
           paddingTop: 7,
         },
 
-        tabBarActiveTintColor: "#fff",
-        tabBarInactiveTintColor: "#fbe0f0",
+        tabBarActiveTintColor: "#d10069",
+        tabBarInactiveTintColor: "#fff",
       }}
     >
       <Tabs.Screen

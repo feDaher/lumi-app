@@ -1,21 +1,26 @@
 import { View, Text, Linking, ScrollView, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+import { Header } from "@/src/components/Header";
+
+const waLink = 'https://wa.me/5531994100807';
+const callFrida = 'https://forumseguranca.org.br/iniciativas/chame-a-frida/';
 
 export default function Informative() {
-  function abrirWhatsApp() {
-    Linking.openURL("https://wa.me/5531994100807");
+  const router = useRouter();
+
+  function openWhatsApp() {
+    Linking.openURL(waLink);
   }
 
-  function abrirSite() {
-    Linking.openURL("https://forumseguranca.org.br/iniciativas/chame-a-frida/");
+  function openFridaSite() {
+    Linking.openURL(callFrida);
   }
 
   return (
     <View className="flex-1 bg-[#FCEFE6]">
       
-      <View className="w-full h-20 bg-[#FF4FA5] flex-row items-center justify-center px-4">
-        <Text className="text-white text-lg font-bold">Informativo</Text>
-      </View>
+      <Header title="Informativos" showBack />
 
       <ScrollView className="p-4">
 
@@ -24,12 +29,27 @@ export default function Informative() {
             Telefones de Emergência
           </Text>
 
-          <Text className="text-gray-700 mb-1">📞 190 – Polícia Militar</Text>
-          <Text className="text-gray-700 mb-1">📞 180 – Central de Atendimento à Mulher</Text>
-          <Text className="text-gray-700">📞 (31) 99410-0807 – Chame a Frida (WhatsApp)</Text>
+          <Text 
+            className="text-gray-700 mb-1"
+          >
+            <Ionicons name="call-outline" size={20} color="#000" />
+            {' '} 190 – Polícia Militar
+          </Text>
+          <Text 
+            className="text-gray-700 mb-1"
+          > 
+            <Ionicons name="call-outline" size={20} color="#000" />
+            {' '} 180 – Central de Atendimento à Mulher
+          </Text>
+          <Text 
+           className="text-gray-700"
+          >
+            <Ionicons name="call-outline" size={20} color="#000" />
+            {' '} (31) 99410-0807 – Chame a Frida (WhatsApp)
+          </Text>
 
           <TouchableOpacity
-            onPress={abrirWhatsApp}
+            onPress={openWhatsApp}
             className="mt-3 bg-[#FF4FA5] px-4 py-2 rounded-xl flex-row items-center justify-center"
           >
             <Ionicons name="logo-whatsapp" size={20} color="#fff" />
@@ -48,7 +68,7 @@ export default function Informative() {
           </Text>
 
           <TouchableOpacity
-            onPress={abrirSite}
+            onPress={openFridaSite}
             className="bg-[#FF4FA5] px-4 py-2 rounded-xl flex-row items-center justify-center"
           >
             <Ionicons name="link" size={20} color="#fff" />
