@@ -1,16 +1,37 @@
-export type Task = {
-  id: string;
-  title: string;
-  done: boolean;
-  createdAt: number;
-};
-
-
 export type User = {
-  id: string;
-  username: string;
-  fullName: string;
-  cpf: string;
-  email: string;
-  senha: string;
+  id?: string;
+  name?: string;
+  cpf?: string;
+  email?: string;
 };
+
+export interface AuthResponse {
+  token: string;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    cpf: string;
+  };
+}
+
+export interface Contact {
+  id: string;
+  name: string;
+  ddd: string;
+  phone: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ContactCreateDTO {
+  name: string;
+  ddd: string;
+  phone: string;
+}
+
+export interface ContactUpdateDTO {
+  name?: string;
+  ddd?: string;
+  phone?: string;
+}

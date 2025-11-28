@@ -16,8 +16,8 @@ export default function AppTabs() {
           paddingTop: 7,
         },
 
-        tabBarActiveTintColor: "#fff",
-        tabBarInactiveTintColor: "#fbe0f0",
+        tabBarActiveTintColor: "#d10069",
+        tabBarInactiveTintColor: "#fff",
       }}
     >
       <Tabs.Screen
@@ -31,17 +31,7 @@ export default function AppTabs() {
       />
 
       <Tabs.Screen
-        name="avisos"
-        options={{
-          title: "Avisos",
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="alert-circle" size={size} color={color} />
-          ),
-        }}
-      />
-
-      <Tabs.Screen
-        name="contatos"
+        name="contacts"
         options={{
           title: "Contatos",
           tabBarIcon: ({ color, size }) => (
@@ -51,24 +41,33 @@ export default function AppTabs() {
       />
 
       <Tabs.Screen
-        name="info"
+        name="riskAssessment"
         options={{
-          title: "Informações",
+          title: "Teste de Risco",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="information-circle" size={size} color={color} />
+            <Ionicons name="alert" size={size} color={color} />
           ),
         }}
       />
 
       <Tabs.Screen
-        name="perfil"
+        name="informative"
         options={{
-          title: "Perfil",
+          title: "Informativos",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="information-circle" size={size} color={color} />
+          ),
+        }}
+      />
+      {/* <Tabs.Screen
+        name="settings"
+        options={{
+          title: "Configurações",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="settings" size={size} color={color} />
           ),
         }}
-      />
+      /> */}
     </Tabs>
   );
 }
