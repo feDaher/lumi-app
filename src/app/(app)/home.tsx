@@ -1,12 +1,25 @@
 import { View, Text, TouchableOpacity, SafeAreaView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as Location from "expo-location";
+import * as TaskManager from "expo-task-manager";
 import { useEffect, useState } from "react";
 import ModalConfirm, { ConfirmOption } from "../../components/ModalConfirm"; 
 import ModalSuccess from "../../components/ModalSuccess";
 import AlertButton from "../../components/AlertButton";
 import { useAuth } from "@/src/context/AuthContext";
 import { Header } from "@/src/components/Header";
+
+TaskManager.defineTask("BACKGROUND_LOCATION_TASK", async () => {
+  try {
+    const loc = await Location.getCurrentPositionAsync({});
+    console.log("Localização atualizada em segundo plano:", {
+      latitude: loc.coords.latitude,
+      longitude: loc.coords.longitude,
+    });
+  } catch (e) {
+    console.log("Erro ao atualizar localização em 2º plano:", e);
+  }
+});
 
 const alertOptions: ConfirmOption[] = [
   {
@@ -36,8 +49,8 @@ export default function Home() {
   const [modalSuccess, setModalSuccess] = useState(false)
   const [showFullAddress, setShowFullAddress] = useState(false);
 
-  useEffect(() => {
-    (async () => {
+  const loadLocation = async () => {
+    try {
       const { status } = await Location.requestForegroundPermissionsAsync();
 
       if (status !== "granted") {
@@ -45,30 +58,75 @@ export default function Home() {
         return;
       }
 
-      try {
-        const loc = await Location.getCurrentPositionAsync({});
-        const address = await Location.reverseGeocodeAsync({
-          latitude: loc.coords.latitude,
-          longitude: loc.coords.longitude,
-        });
+      const loc = await Location.getCurrentPositionAsync({});
+      const address = await Location.reverseGeocodeAsync({
+        latitude: loc.coords.latitude,
+        longitude: loc.coords.longitude,
+      });
 
-        if (address.length > 0) {
-          const a = address[0];
-          const formatted =
-            `${a.district ?? ''} - ${a.region ?? ''}`;
+      if (address.length > 0) {
+        const a = address[0];
+        const formatted =
+          `${a.district ?? ''} - ${a.region ?? ''}`;
 
-          const formattedAddress =
+        const formattedAddress =
           `${a.formattedAddress ?? ''}`;
-          setFormattedAddress(formattedAddress);
-          setLocationText(formatted || "Localização encontrada");
-        } else {
-          setLocationText("Localização indisponível");
-        }
-      } catch (e) {
-        setLocationText("Erro ao buscar localização");
+        setFormattedAddress(formattedAddress);
+        setLocationText(formatted || "Localização encontrada");
+      } else {
+        setLocationText("Localização indisponível");
       }
-    })();
+    } catch (e) {
+      setLocationText("Erro ao buscar localização");
+    }
+  };
+
+  useEffect(() => {
+    loadLocation();
   }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      console.log("Atualizando localização automaticamente...");
+      loadLocation();
+    }, 30 * 60 * 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    const startBackgroundTask = async () => {
+      const { status: fg } = await Location.requestForegroundPermissionsAsync();
+      const { status: bg } = await Location.requestBackgroundPermissionsAsync();
+
+      if (fg !== "granted" || bg !== "granted") {
+        console.log("Permissões de localização insuficientes.");
+        return;
+      }
+
+      const isRegistered = await TaskManager.isTaskRegisteredAsync("BACKGROUND_LOCATION_TASK");
+
+      if (!isRegistered) {
+        await Location.startLocationUpdatesAsync("BACKGROUND_LOCATION_TASK", {
+          accuracy: Location.Accuracy.High,
+          timeInterval: 30 * 60 * 1000,
+          deferredUpdatesInterval: 30 * 60 * 1000,
+          showsBackgroundLocationIndicator: true,
+          foregroundService: {
+            notificationTitle: "Localização ativa",
+            notificationBody: "Sua localização está sendo atualizada periodicamente.",
+          },
+        });
+      }
+    };
+
+    startBackgroundTask();
+  }, []);
+
+  const handleClick = async () => {
+    await loadLocation();
+    setShowFullAddress((prev) => !prev);
+  };
 
   const handleAlert = () => {
     setModalVisible(true);
@@ -103,7 +161,7 @@ export default function Home() {
       />
 
       <TouchableOpacity
-        onPress={() => setShowFullAddress((prev) => !prev)}
+        onPress={handleClick}
         activeOpacity={0.8}
         className="flex-row items-center bg-white rounded-full px-3 py-4 shadow mt-5 mx-5"
       >
