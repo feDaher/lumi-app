@@ -7,6 +7,7 @@ import ModalSuccess from "../../components/ModalSuccess";
 import AlertButton from "../../components/AlertButton";
 import { useAuth } from "@/src/context/AuthContext";
 import { Header } from "@/src/components/Header";
+import { truncateName } from "../components/format";
 
 const alertOptions: ConfirmOption[] = [
   {
@@ -93,7 +94,7 @@ export default function Home() {
   return (
     <SafeAreaView className="flex-1 bg-[#fdf3ea]">
       <Header
-        title={`Olá! ${user?.name ?? ''}`}
+        title={`Olá! ${truncateName(user?.name)}`}
         left={
           <TouchableOpacity onPress={signOut} className="items-center">
             <Ionicons name="exit-outline" size={26} color="#fff" />
