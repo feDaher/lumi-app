@@ -35,3 +35,20 @@ export interface ContactUpdateDTO {
   ddd?: string;
   phone?: string;
 }
+
+export type SignUpRequest = {
+  name: string;
+  cpf: string;
+  email: string;
+  password: string;
+};
+
+export type SignUpResponse = {
+  token: string;
+  user: {
+    id: string;
+    name: string;
+    cpf: string;
+    email: string;
+  };
+};
