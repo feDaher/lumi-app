@@ -1,0 +1,26 @@
+{
+  "cli": {
+    "version": ">= 3.0.0"
+  },
+  "build": {
+    "preview": {
+      "developmentClient": false,
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_BASE_URL": "https://lumi-api-production-53fd.up.railway.app",
+        "EXPO_PUBLIC_AUTH_KEY": "AUTH_TOKEN"
+      }
+    },
+    "production": {
+      "developmentClient": false,
+      "distribution": "store",
+      "env": {
+        "EXPO_PUBLIC_BASE_URL": "https://lumi-api-production-53fd.up.railway.app",
+        "EXPO_PUBLIC_AUTH_KEY": "AUTH_TOKEN"
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}
