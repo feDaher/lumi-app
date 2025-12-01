@@ -55,14 +55,12 @@ api.interceptors.request.use(
  */
 api.interceptors.response.use(
   (response: AxiosResponse) => {
-    // métrica simples
     const started = (response.config as any)?.meta?.startedAt;
     if (started) {
       const ms = Date.now() - started;
       // console.log(`[API] ${response.config.url} (${ms}ms)`);
     }
 
-    // 🔥 retorna direto o payload
     return response.data;
   },
   async (error: AxiosError<any>) => {
