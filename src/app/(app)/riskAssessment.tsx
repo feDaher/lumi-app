@@ -1,15 +1,17 @@
 import React, { useState, useRef } from "react";
-import { View, Text, TouchableOpacity, ScrollView, Alert, SafeAreaView, Platform, StatusBar, Animated } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView, SafeAreaView, Platform, StatusBar, Animated } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { questions, Option, Question } from "../../data/questions";
 import { Header } from "@/src/components/Header";
+import { useMessage } from "@/src/context/MessageContext";
 
 interface Answers {
   [key: string]: Option | null;
 }
 
 export default function RiskAssessment() {
+  const { showMessage } = useMessage();
   const router = useRouter();
   const [answers, setAnswers] = useState<Answers>({
     risk: null,
@@ -42,18 +44,27 @@ export default function RiskAssessment() {
 
   const handleEvaluate = () => {
     if (Object.values(answers).some((a) => a === null)) {
-      Alert.alert("Atenção", "Por favor, responda todas as perguntas antes de avaliar.");
+      showMessage({
+        type: "warning",
+        text: "Por favor, responda todas as perguntas antes de avaliar.",
+      });
       return;
     }
 
-    const score = Object.values(answers).reduce((total, option) => total + (option?.value || 0), 0);
+    const score = Object.values(answers).reduce(
+      (total, option) => total + (option?.value || 0),
+      0
+    );
 
     let result = "";
     if (score <= 2) result = "Risco baixo";
     else if (score <= 6) result = "Risco moderado";
     else result = "Risco alto";
 
-    Alert.alert("Resultado da avaliação", result);
+    showMessage({
+      type: "success",
+      text: `Resultado da avaliação: ${result}`,
+    });
   };
 
   const renderDropdown = (field: string, options: Option[]) => {
