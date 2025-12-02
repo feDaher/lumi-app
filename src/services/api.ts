@@ -21,6 +21,7 @@ export const api: Api = axios.create({
 });
 
 export async function post<T>(url: string, body?: any): Promise<T> {
+  console.log(url, body);
   return api.post(url, body) as unknown as T;
 }
 
@@ -60,31 +61,27 @@ api.interceptors.response.use(
       const ms = Date.now() - started;
       // console.log(`[API] ${response.config.url} (${ms}ms)`);
     }
-
+    const data = response.data;
     return response.data;
   },
   async (error: AxiosError<any>) => {
     const status = error.response?.status;
-    const message =
-      error.response?.data?.message ||
-      error.response?.data?.error ||
-      "Falha na solicitação.";
+    const data   = error.response?.data;
 
-    // 401 → sessão expirada
-    if (status === 401) {
-      // TODO: refresh token ou deslogar
-      // await SecureStore.deleteItemAsync('token');
-      // router.replace("/login");
+    if (data && typeof data === "object") {
+      return Promise.reject({
+        status: data.status,
+        code: data.code,
+        message: data.message,
+        field: data.field,
+        issues: data.issues || data.message,
+      });
     }
 
-    const normalized = {
+    return Promise.reject({
       status,
-      message,
-      url: error.config?.url,
-      method: error.config?.method,
-      payload: error.response?.data,
-    };
-
-    return Promise.reject(normalized);
+      code: "UNKNOWN_ERROR",
+      message: "Erro inesperado",
+    });
   }
 );

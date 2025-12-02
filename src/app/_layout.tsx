@@ -5,7 +5,7 @@ import { StatusBar } from "expo-status-bar";
 import { useThemePersisted } from "@/src/hooks/useThemePersisted";
 import { Feather } from "@expo/vector-icons";
 import { MessageProvider } from "../context/MessageContext";
-import Toast from "@/src/app/components/Toast";
+import Toast from "../components/Toast";
 import { useEffect, useState } from "react";
 
 function RootNavigationGuard() {

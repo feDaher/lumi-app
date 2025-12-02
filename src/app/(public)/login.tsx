@@ -53,8 +53,8 @@ export default function Login() {
       router.replace("/(app)/home");
     } catch (e) {
       const msg =
-        e instanceof Error ? e.message : "Falha no login, tente novamente";
-
+      e instanceof Error ? e.message : "Falha no login, tente novamente";
+  
       showMessage({
         text: msg,
         type: "error",

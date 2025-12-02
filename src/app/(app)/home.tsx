@@ -8,7 +8,7 @@ import ModalSuccess from "../../components/ModalSuccess";
 import AlertButton from "../../components/AlertButton";
 import { useAuth } from "@/src/context/AuthContext";
 import { Header } from "@/src/components/Header";
-import { truncateName } from "../components/format";
+import { truncateName } from "@/src/utils";
 
 TaskManager.defineTask("BACKGROUND_LOCATION_TASK", async () => {
   try {
