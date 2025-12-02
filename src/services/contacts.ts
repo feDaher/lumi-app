@@ -1,9 +1,9 @@
 import { api } from './api';
-import { Contact, ContactCreateDTO, ContactUpdateDTO } from '../types';
+import { Contact, ContactCreateDTO, ContactUpdateDTO, PaginatedResponse } from '../types';
 
 export class ContactService {
-  static list(): Promise<Contact[]> {
-    return api.get("/contact");
+  static list(page = 1, limit = 20): Promise<PaginatedResponse<Contact>> {
+    return api.get(`/contact?page=${page}&limit=${limit}`);
   }
 
   static getById(id: string): Promise<Contact> {
