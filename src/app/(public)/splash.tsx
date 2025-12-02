@@ -2,6 +2,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Animated, ImageBackground, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
+import * as SecureStore from "expo-secure-store";
+import { AUTH_KEY } from "@/src/env";
+import { validationSession } from "@/src/services/session";
 
 // SplashScreen.preventAutoHideAsync();
 export default function Splash() {
@@ -26,20 +29,41 @@ export default function Splash() {
     );
     loop.start();
 
-    const timer = setTimeout(async () => {
-      await SplashScreen.hideAsync();
-      router.replace("/welcome");
-    }, 3000);
+const prepareApp = async () => {
+  try {
+    const minTimePromise = new Promise((resolve) => setTimeout(resolve, 2000));
+    const sessionPromise = (async () => {
+      const token = await SecureStore.getItem(AUTH_KEY);
+      if (!token) {
+            return "/(public)/login";
+          }
+        try {
+          const data = await validationSession(token);            
+            return "/(app)/home";
+          } catch (error) {
+            await SecureStore.deleteItemAsync(AUTH_KEY)
+            return "/(public)/login";
+          }
+        })();
+        const [_, nextRoute] = await Promise.all([minTimePromise, sessionPromise]);
+        await SplashScreen.hideAsync();
+        
+        router.replace(nextRoute as any);
+
+      } catch (e) {
+        router.replace("(public)/login");
+      }
+    };
+
+    prepareApp();
 
     return () => {
       loop.stop();
-      clearTimeout(timer);
-    }
+    };
   }, []);
 
   const onLayoutRootView = useCallback(async () => {
     if (isReady) {
-      await SplashScreen.hideAsync();
     }
   }, [isReady]);
 

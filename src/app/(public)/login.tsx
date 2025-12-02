@@ -50,6 +50,7 @@ export default function Login() {
         type: "success",
         text: "Seja Bem-vinda!",
       });
+      router.replace("/(app)/home");
     } catch (e) {
       const msg =
         e instanceof Error ? e.message : "Falha no login, tente novamente";
