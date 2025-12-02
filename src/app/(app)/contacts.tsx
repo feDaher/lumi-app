@@ -16,6 +16,7 @@ import { useMessage } from "@/src/context/MessageContext";
 import { Header } from "@/src/components/Header";
 import { ContactService } from "@/src/services/contacts";
 import { Contact } from "@/src/types";
+import { Feather } from "@expo/vector-icons";
 
 const DDI = '55';
 
@@ -31,6 +32,7 @@ export default function Contacts() {
   const [menuVisibleIndex, setMenuVisibleIndex] = useState<number | null>(null);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [contactToDelete, setContactToDelete] = useState<number | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     loadContacts();
@@ -196,7 +198,36 @@ export default function Contacts() {
             <Ionicons name="add-circle-outline" size={18} color="white" />
             <Text className="text-white font-bold ml-1">Adicionar</Text>
           </TouchableOpacity>
-        </View>
+    </View>
+
+   <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          backgroundColor: "#ffffffff",
+          marginTop: 3,
+          marginHorizontal: 16,
+          paddingHorizontal: 12,
+          paddingVertical: 1,
+          borderRadius: 10,
+          borderWidth: 1,
+          borderColor: "#e0e0e0",
+        }}
+      >
+      <Feather name="search" size={18} color="#aaa7a7ff" style={{ marginRight: 8 }} />
+
+      <TextInput
+        placeholder="Pesquisar Contato..."
+        value={searchTerm}
+        onChangeText={setSearchTerm}
+        placeholderTextColor="#999"
+        style={{
+          flex: 1,
+          fontSize: 13,
+          color: "#333",
+        }}
+      />
+    </View>
 
         {contacts.map((c, index) => (
           <View
