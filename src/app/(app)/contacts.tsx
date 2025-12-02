@@ -11,6 +11,7 @@ import {
   Linking,
   Platform,
 } from "react-native";
+import { useDebouncedCallback } from "use-debounce";
 import { Ionicons } from "@expo/vector-icons";
 import { useMessage } from "@/src/context/MessageContext";
 import { Header } from "@/src/components/Header";
@@ -144,6 +145,24 @@ export default function Contacts() {
     return `${contact.ddd}${contact.phone}`;
   }
 
+  const handleSearchDebounced = useDebouncedCallback(async (text: string) => {
+    try {
+      if (text.trim() === "") {
+        loadContacts();
+        return;
+      }
+      const list = await ContactService.search(text);
+      setContacts(list);
+    } catch {
+      showMessage({ type: "error", text: "Erro ao buscar contatos" });
+    }
+  }, 500);
+
+  function handleSearch(text: string) {
+    setSearchTerm(text);
+    handleSearchDebounced(text);
+  }
+
   return (
     <SafeAreaView className="flex-1 bg-[#FAF0E6]">
       <StatusBar backgroundColor="#FF1C8D" barStyle="light-content" />
@@ -198,36 +217,19 @@ export default function Contacts() {
             <Ionicons name="add-circle-outline" size={18} color="white" />
             <Text className="text-white font-bold ml-1">Adicionar</Text>
           </TouchableOpacity>
-    </View>
+        </View>
 
-   <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          backgroundColor: "#ffffffff",
-          marginTop: 3,
-          marginHorizontal: 16,
-          paddingHorizontal: 12,
-          paddingVertical: 1,
-          borderRadius: 10,
-          borderWidth: 1,
-          borderColor: "#e0e0e0",
-        }}
-      >
-      <Feather name="search" size={18} color="#aaa7a7ff" style={{ marginRight: 8 }} />
+        <View className="flex-row items-center bg-white mb-5 px-3 py-2 rounded-xl border border-gray-200">
+          <Feather name="search" size={18} color="#aaa" className="mr-2" />
 
-      <TextInput
-        placeholder="Pesquisar Contato..."
-        value={searchTerm}
-        onChangeText={setSearchTerm}
-        placeholderTextColor="#999"
-        style={{
-          flex: 1,
-          fontSize: 13,
-          color: "#333",
-        }}
-      />
-    </View>
+          <TextInput
+            placeholder="Pesquisar contato..."
+            value={searchTerm}
+            onChangeText={handleSearch}
+            className="flex-1 text-[13px] text-[#333]"
+            placeholderTextColor="#999"
+          />
+        </View>
 
         {contacts.map((c, index) => (
           <View

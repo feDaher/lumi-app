@@ -21,5 +21,9 @@ export class ContactService {
   static delete(id: string): Promise<void> {
     return api.delete(`/contact/${id}`);
   }
+
+  static search(term: string): Promise<Contact[]> {
+    return api.get(`/contact/search?search=${term}`);
+  }
 }
 

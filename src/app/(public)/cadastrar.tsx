@@ -65,7 +65,7 @@ export default function Cadastrar() {
       showMessage({ type: "success", text: "Usuário cadastrado!" });
       router.replace("/login");
     } catch (error: any) {
-      console.log('cadastrar', error);
+      
       showMessage({
         type: "error",
         text:

@@ -21,7 +21,6 @@ export const api: Api = axios.create({
 });
 
 export async function post<T>(url: string, body?: any): Promise<T> {
-  console.log(url, body);
   return api.post(url, body) as unknown as T;
 }
 
@@ -61,7 +60,7 @@ api.interceptors.response.use(
       const ms = Date.now() - started;
       // console.log(`[API] ${response.config.url} (${ms}ms)`);
     }
-    const data = response.data;
+
     return response.data;
   },
   async (error: AxiosError<any>) => {
