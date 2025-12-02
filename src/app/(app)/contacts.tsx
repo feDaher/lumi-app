@@ -17,6 +17,8 @@ import { Header } from "@/src/components/Header";
 import { ContactService } from "@/src/services/contacts";
 import { Contact } from "@/src/types";
 
+const DDI = '55';
+
 export default function Contacts() {
   const { showMessage } = useMessage();
 
@@ -107,15 +109,18 @@ export default function Contacts() {
   }
 
 
-  const makeCall = (phone: string) => {
-    const phoneNumber =
-      Platform.OS === "android" ? `tel:${phone}` : `telprompt:${phone}`;
-    Linking.openURL(phoneNumber);
+  const makeCall = (phone: string, ddd?: string) => {
+    const phoneNumber = `0${ddd}${phone}`;
+    const url =
+      Platform.OS === "android" ? `tel:${phoneNumber}` : `telprompt:${phoneNumber}`;
+    Linking.openURL(url);
   };
 
-  const sendWhatsApp = (phone: string) => {
-    const message = "Preciso de ajuda!";
-    const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+  const sendWhatsApp = (ddd: string, phone: string) => {
+    const message = 'Preciso de ajuda!';
+    const phoneNumber = `${DDI}${ddd}${phone}`;
+
+    const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
     Linking.openURL(url);
   };
 
@@ -255,13 +260,13 @@ export default function Contacts() {
               <View className="flex-row items-center space-x-2 mt-4">
                 <TouchableOpacity
                   className="bg-green-500 px-3 py-1 rounded-full"
-                  onPress={() => sendWhatsApp(c.phone)}
+                  onPress={() => sendWhatsApp(c.ddd, c.phone)}
                 >
                   <Ionicons name="logo-whatsapp" size={17} color="white" />
                 </TouchableOpacity>
                 <TouchableOpacity
                   className="bg-green-500 px-3 py-1 rounded-full"
-                  onPress={() => makeCall(c.phone)}
+                  onPress={() => makeCall(c.phone, c.ddd)}
                 >
                   <Ionicons name="call" size={17} color="white" />
                 </TouchableOpacity>

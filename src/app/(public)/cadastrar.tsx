@@ -1,5 +1,5 @@
 import { use, useState } from "react";
-import { View, Text, Alert, Pressable, ScrollView, ImageBackground, Image, KeyboardAvoidingView, Platform, TouchableOpacity } from "react-native";
+import { View, Text, Pressable, ScrollView, ImageBackground, Image, KeyboardAvoidingView, Platform, TouchableOpacity } from "react-native";
 import { Stack, router } from "expo-router";
 import * as SecureStore from "expo-secure-store";
 import  uuid  from "react-native-uuid";
@@ -7,58 +7,70 @@ import Input from "../../components/Input";
 import { isValidEmail, maskCPF }  from "../../utils";
 import { Feather } from "@expo/vector-icons";
 import { signUp } from "@/src/services/signup";
+import { useMessage } from "@/src/context/MessageContext";
 
 export default function Cadastrar() {
-  const [fullName, setFullName] = useState<string>('');
-  const [cpf, setCpf] = useState<string>('');
-  const [email, setEmail] = useState<string>('');
-  const [senha, setSenha] = useState<string>('');
-  const [confirmSenha, setConfirmSenha] = useState<string>('');
+  const { showMessage } = useMessage();
+  const [fullName, setFullName] = useState<string>("");
+  const [cpf, setCpf] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [senha, setSenha] = useState<string>("");
+  const [confirmSenha, setConfirmSenha] = useState<string>("");
   const [loadingCad, setLoadingCad] = useState<boolean>(false);
   const [loadingCan, setLoadingCan] = useState<boolean>(false);
   const [showPwd, setShowPwd] = useState(false);
   const [showPwdConfirm, setShowPwdConfirm] = useState(false);
 
   const handleCadastro = async () => {
-    const cleanCpf = cpf.replace(/\D/g, '');
+    const cleanCpf = cpf.replace(/\D/g, "");
 
     if (!fullName || !cpf || !email || !senha || !confirmSenha) {
-      return Alert.alert("Inválido!", "Preencha todos os campos!");
-    }
-    if (!isValidEmail(email)) {
-      return Alert.alert("Email inválido!", "Tente novamente.");
-    }
-    if (cleanCpf.length !== 11) {
-      return Alert.alert("Inválido!", "O CPF precisa ter 11 dígitos.");
-    }
-    if (senha.length < 6) {
-      return Alert.alert("Erro", "Senha muito fraca!")
-    }
-    if (senha !== confirmSenha) {
-      return Alert.alert("Erro", "As senhas não conferem.");
+      return showMessage({ type: "error", text: "Preencha todos os campos!" });
     }
 
+    if (!isValidEmail(email)) {
+      return showMessage({ type: "error", text: "Tente novamente." });
+    }
+
+    if (cleanCpf.length !== 11) {
+      return showMessage({
+        type: "error",
+        text: "O CPF precisa ter 11 dígitos.",
+      });
+      return showMessage({ type: "error", text: "CPF precisa ter 11 dígitos." });
+    }
+
+    if (senha.length < 6) {
+      return showMessage({ type: "error", text: "Senha muito fraca!" });
+    }
+
+    if (senha !== confirmSenha) {
+      return showMessage({ type: "error", text: "As senhas não conferem." });
+    }
 
     try {
       setLoadingCad(true);
 
-      const apiData = {
+      const data = await signUp({
         name: fullName,
         cpf: cleanCpf,
-        email: email,
+        email,
         password: senha,
-      };
+      });
 
-      const { token } = await signUp(apiData.name, apiData.cpf, apiData.email, apiData.password);
+      await SecureStore.setItemAsync("token", data.token);
 
-      await SecureStore.setItemAsync("token", token);
+      showMessage({ type: "success", text: "Usuário cadastrado com sucesso!" });
 
-      Alert.alert("Sucesso", "Usuário cadastrado!");
+      showMessage({ type: "success", text: "Usuário cadastrado!" });
       router.replace("/login");
-
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || "Falha no cadastro. Tente novamente.";
-      Alert.alert("Error", errorMessage);
+      showMessage({
+        type: "error",
+        text:
+          error.response?.data?.message ||
+          "Falha no cadastro. Tente novamente.",
+      });
     } finally {
       setLoadingCad(false);
     }
@@ -77,7 +89,7 @@ export default function Cadastrar() {
         <View style={{ alignItems: "center", marginTop: 140, marginBottom: -250 }}>
           <Image
             source={require("assets/logo1.png")}
-            style={{width:120, height: 120}}
+            style={{ width: 120, height: 120 }}
           />
         </View>
 

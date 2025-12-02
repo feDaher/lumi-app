@@ -5,6 +5,7 @@ import { AUTH_KEY } from "@/src/env";
 import { signIn as signInService } from "@/src/services/signIn";
 import { api } from "@/src/services/api";
 import { User } from "../types";
+import { logout } from "../services/session";
 
 type AuthContextType = {
   user: User | null;
@@ -12,6 +13,7 @@ type AuthContextType = {
   isLoading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
+  updateUser: (user: User) => void;
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -30,8 +32,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const storedToken = await SecureStore.getItemAsync(AUTH_KEY);
         const storedUser = await SecureStore.getItemAsync(USER_KEY);
 
-        if (storedToken) {
-          setToken(storedToken);
+        if (storedToken && storedToken) {
           api.defaults.headers.common["Authorization"] = `Bearer ${storedToken}`;
         }
 
@@ -48,6 +49,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const { token, user } = await signInService(email, password);
 
+      api.defaults.headers.common["Authorization"] = `Bearer ${token}`
+
       await SecureStore.setItemAsync(AUTH_KEY, token);
       await SecureStore.setItemAsync(USER_KEY, JSON.stringify(user));
 
@@ -60,16 +63,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 
   const signOut = async () => {
+    try{
+      await logout();
+    } catch(error) {
+      console.log("Erro ao deslogar no backend")
+    } finally {
     await SecureStore.deleteItemAsync(AUTH_KEY);
     await SecureStore.deleteItemAsync(USER_KEY);
-
     delete api.defaults.headers.common["Authorization"];
 
     setToken(null);
     setUser(null);
 
     router.replace("/(public)/login");
+    }
   };
+
+  const updateUser = (newUser: User) => {
+    setUser(newUser);
+    SecureStore.setItemAsync(USER_KEY, JSON.stringify(newUser));
+  }
 
   const value = useMemo(
     () => ({
@@ -78,6 +91,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       isLoading,
       signIn,
       signOut,
+      updateUser
     }),
     [user, token, isLoading]
   );

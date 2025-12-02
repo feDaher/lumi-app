@@ -59,15 +59,15 @@ export default function AppTabs() {
           ),
         }}
       />
-      {/* <Tabs.Screen
-        name="settings"
+      { <Tabs.Screen
+        name="perfil"
         options={{
-          title: "Configurações",
+          title: "perfil",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="settings" size={size} color={color} />
+            <Ionicons name="woman" size={size} color={color} />
           ),
         }}
-      /> */}
+      /> }
     </Tabs>
   );
 }
