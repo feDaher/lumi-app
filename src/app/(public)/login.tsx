@@ -48,7 +48,7 @@ export default function Login() {
       await signIn(email.trim(), pwd);
       showMessage({
         type: "success",
-        text: "Bem-vindo de volta 👋",
+        text: "Seja Bem-vinda!",
       });
     } catch (e) {
       const msg =

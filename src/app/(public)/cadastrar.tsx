@@ -27,18 +27,23 @@ export default function Cadastrar() {
     if (!fullName || !cpf || !email || !senha || !confirmSenha) {
       return showMessage({ type: "error", text: "Preencha todos os campos!" });
     }
+
     if (!isValidEmail(email)) {
       return showMessage({ type: "error", text: "Tente novamente." });
     }
+
     if (cleanCpf.length !== 11) {
       return showMessage({
         type: "error",
         text: "O CPF precisa ter 11 dígitos.",
       });
+      return showMessage({ type: "error", text: "CPF precisa ter 11 dígitos." });
     }
+
     if (senha.length < 6) {
       return showMessage({ type: "error", text: "Senha muito fraca!" });
     }
+
     if (senha !== confirmSenha) {
       return showMessage({ type: "error", text: "As senhas não conferem." });
     }
@@ -46,16 +51,16 @@ export default function Cadastrar() {
     try {
       setLoadingCad(true);
 
-      const apiData = {
+      const data = await signUp({
         name: fullName,
         cpf: cleanCpf,
-        email: email,
+        email,
         password: senha,
-      };
+      });
 
-      const { token } = await signUp(apiData.name, apiData.cpf, apiData.email, apiData.password);
+      await SecureStore.setItemAsync("token", data.token);
 
-      await SecureStore.setItemAsync("token", token);
+      showMessage({ type: "success", text: "Usuário cadastrado com sucesso!" });
 
       showMessage({ type: "success", text: "Usuário cadastrado!" });
       router.replace("/login");
