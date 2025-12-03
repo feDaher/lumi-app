@@ -8,6 +8,7 @@ export default function AppTabs() {
       screenOptions={{
         headerShown: false,
          tabBarStyle: {
+          position: "absolute",
           backgroundColor: "#ff69b4",
           borderTopLeftRadius: 22,
           borderTopRightRadius: 22,

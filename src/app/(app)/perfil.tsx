@@ -1,119 +1,174 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Pressable, ScrollView, ImageBackground } from 'react-native';
-import { useRouter } from 'expo-router';
-import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
-
-const backgroundImage = require('@/assets/fundo.png');
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  Pressable,
+  ScrollView,
+  SafeAreaView,
+} from "react-native";
+import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
+import { useAuth } from "@/src/context/AuthContext";
+import { Header } from "@/src/components/Header";
 
 const COLORS = {
-  pinkHeader: '#F25C9F',
-  inputGray: '#F3F4F6',
-  greenButton: '#78C86C',
-  warningYellow: '#FBBF24',
-  textGray: '#A0A0A0'
+  pinkHeader: "#F25C9F",
+  inputGray: "#F3F4F6",
+  purpleButton: "#c64eccdc",
+  warningYellow: "#FBBF24",
+  textGray: "#A0A0A0",
 };
 
 interface InputFieldProps {
   placeholder: string;
-  iconName: keyof typeof Ionicons.glyphMap;
+  iconName: string;
   isPassword?: boolean;
   showWarning?: boolean;
   value?: string;
+  editable?: boolean;
+  onChange?: (t: string) => void;
 }
 
-const InputField = ({ placeholder, iconName, isPassword = false, showWarning = false, value }: InputFieldProps) => {
+const InputField = ({
+  placeholder,
+  iconName,
+  isPassword = false,
+  showWarning = false,
+  value,
+  editable = true,
+  onChange,
+}: InputFieldProps) => {
   const [isSecure, setIsSecure] = useState(isPassword);
 
   return (
-    <View className='flex-row items-center bg-gray-100 rounded-full px-6 py-4 mb-4 shadow-sm border border-gray-50'>
+    <View className="bg-gray-100 rounded-xl px-4 py-1 mb-3 flex-row items-center border border-[#F25C9F]">
       <TextInput
-        className='flex-1 text-gray-700 text-base mr-4'
+        className="flex-1 text-gray-700 text-base mr-3"
         placeholder={placeholder}
         placeholderTextColor={COLORS.textGray}
         secureTextEntry={isSecure}
-        defaultValue={value}
-        style={{ includeFontPadding: false }}
+        value={value}
+        onChangeText={onChange}
+        editable={editable}
       />
 
-      {}
       {showWarning && (
-        <FontAwesome5 name='exclamation-triangle' size={18} color={COLORS.warningYellow} style={{ marginRight: 12 }} />
+        <FontAwesome5
+          name="exclamation-triangle"
+          size={18}
+          color={COLORS.warningYellow}
+          style={{ marginRight: 6 }}
+        />
       )}
 
-      {}
       {isPassword ? (
         <Pressable onPress={() => setIsSecure(!isSecure)}>
-          <Ionicons name={isSecure ? 'eye-outline' : 'eye-off-outline'} size={22} color={COLORS.textGray} />
+          <Ionicons
+            name={isSecure ? "eye-outline" : "eye-off-outline"}
+            size={20}
+            color={COLORS.textGray}
+          />
         </Pressable>
       ) : (
-        <Ionicons name={iconName} size={20} color={COLORS.textGray} />
+        <Ionicons name={iconName} size={18} color={COLORS.textGray} />
       )}
     </View>
   );
 };
 
 export default function Perfil() {
-  const router = useRouter();
+  const { user } = useAuth();
+
+  const [name, setName] = useState(user?.name ?? '');
+  const [email, setEmail] = useState(user?.email ?? '');
+  const [cpf, setCpf] = useState(user?.cpf ?? '');
+  const [address, setAddress] = useState(user?.address ?? '');
 
   return (
-    <ImageBackground 
-      source={backgroundImage} 
-      className='flex-1' 
-      resizeMode='cover'
-    >
-      
-     <View 
-        className='pt-12 pb-6 px-6 flex-row items-center justify-center rounded-b-[30px] shadow-lg z-10 relative'
-        style={{ backgroundColor: COLORS.pinkHeader }}
+    <SafeAreaView className="flex-1 bg-[#fdf3ea]">
+      <Header title="Perfil" showBack />
+
+      <ScrollView
+        contentContainerStyle={{ paddingBottom: 90 }}
+        showsVerticalScrollIndicator={false}
       >
-        <Pressable 
-          onPress={() => router.back()} 
-          className='absolute left-6 bottom-6 bg-white/20 rounded-full p-2 z-20'
-        >
-           <Ionicons name='chevron-back' size={24} color='white' />
-        </Pressable>
-        
-        <Text className='text-white text-xl font-bold'>Perfil</Text>
+        <View className="items-center mt-6 mb-4">
+          <View
+            className="h-28 w-28 rounded-full bg-gray-100 shadow-md border-4 items-center justify-center"
+            style={{ borderColor: COLORS.pinkHeader }}
+          >
+            <Ionicons
+              name="person-outline"
+              size={60}
+              color={COLORS.pinkHeader}
+            />
 
-      </View>
-
-      <View className='flex-1 bg-white rounded-t-[40px] -mt-16 px-6 shadow-[0_-5px_15px_rgba(0,0,0,0.05)]'>
-        <ScrollView 
-          showsVerticalScrollIndicator={false} 
-          contentContainerStyle={{ paddingBottom: 100, paddingTop: 20 }}
-          className='overflow-visible'
-        >
-          
-          <View className='items-center -mt-16 mb-8'>
-            <View className='h-32 w-32 rounded-full bg-white border-[3px] items-center justify-center relative shadow-sm' style={{ borderColor: COLORS.pinkHeader }}>
-              <Ionicons name='camera-outline' size={50} color={COLORS.pinkHeader} style={{ opacity: 0.5 }} />
-              
-              <View className='absolute bottom-1 right-1 rounded-full p-[6px] border-[3px] border-white flex items-center justify-center shadow-sm' style={{ backgroundColor: COLORS.pinkHeader }}>
-                 <Ionicons name='add' size={16} color='white' fontWeight='bold' />
-              </View>
+            <View
+              className="absolute bottom-1 right-1 rounded-full p-1 border-2"
+              style={{
+                backgroundColor: COLORS.pinkHeader,
+                borderColor: "white",
+              }}
+            >
+              <Ionicons name="camera" size={12} color="white" />
             </View>
           </View>
+        </View>
 
-          <View className='mt-4'>
-            <InputField placeholder='Nome Completo' iconName='pencil-outline' value='Nome Completo' />
-            <InputField placeholder='CPF' iconName='pencil-outline' value='CPF' />
-            <InputField placeholder='@ E-mail' iconName='pencil-outline' value='@ E-mail' />
-            
-            <InputField placeholder='Endereço' iconName='pencil-outline' showWarning={true} value='Endereço' />
-            
-            <InputField placeholder='Altere sua senha' iconName='pencil-outline' isPassword={true} />
-            <InputField placeholder='Repita a senha' iconName='pencil-outline' isPassword={true} />
-          </View>
+        <View className="px-6">
+          <InputField
+            placeholder="Nome Completo"
+            iconName="person-outline"
+            value={name}
+            onChange={setName}
+            editable={false}
+          />
 
-          <Pressable 
-            className='rounded-full py-4 items-center mt-8 mx-8 shadow-md active:opacity-90'
-            style={{ backgroundColor: COLORS.greenButton }}
+          <InputField
+            placeholder="CPF"
+            iconName="document-text-outline"
+            value={cpf}
+            onChange={setCpf}
+            editable={false}
+          />
+
+          <InputField
+            placeholder="@ email"
+            iconName="mail-outline"
+            value={email}
+            onChange={setEmail}
+            editable={false}
+          />
+
+          <InputField
+            placeholder="Endereço"
+            iconName="location-outline"
+            showWarning={!address}
+            value={address}
+            onChange={setAddress}
+          />
+
+          <InputField
+            placeholder="Nova senha"
+            iconName="key-outline"
+            isPassword
+          />
+          <InputField
+            placeholder="Repita a senha"
+            iconName="key-outline"
+            isPassword
+          />
+
+          <Pressable
+            className="rounded-full py-4 items-center mt-6 shadow-md"
+            style={{ backgroundColor: COLORS.purpleButton }}
           >
-            <Text className='text-white text-lg font-bold'>Concluido</Text>
+            <Text className="text-white font-bold text-base">
+              Salvar alterações
+            </Text>
           </Pressable>
-
-        </ScrollView>
-      </View>
-    </ImageBackground>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 }

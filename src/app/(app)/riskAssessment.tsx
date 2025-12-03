@@ -104,7 +104,7 @@ export default function RiskAssessment() {
             </View>
           ))}
 
-          <TouchableOpacity onPress={handleEvaluate} className="bg-[#971A9D] py-3 rounded-full mt-8 mb-6 shadow-md">
+          <TouchableOpacity onPress={handleEvaluate} className="bg-[#c64eccdc] py-3 rounded-full mt-8 mb-6 shadow-md">
             <Text className="text-white font-bold text-center text-base">Avaliar</Text>
           </TouchableOpacity>
         </View>
