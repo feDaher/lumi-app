@@ -1,4 +1,5 @@
 import { View, Text, Linking, ScrollView, TouchableOpacity } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { Header } from "@/src/components/Header";
@@ -18,8 +19,7 @@ export default function Informative() {
   }
 
   return (
-    <View className="flex-1 bg-[#FCEFE6]">
-      
+    <SafeAreaView className="flex-1 bg-[#FAF0E6]">
       <Header title="Informativos" showBack />
 
       <ScrollView className="p-4">
@@ -42,7 +42,7 @@ export default function Informative() {
             {' '} 180 – Central de Atendimento à Mulher
           </Text>
           <Text 
-           className="text-gray-700"
+          className="text-gray-700"
           >
             <Ionicons name="call-outline" size={20} color="#000" />
             {' '} (31) 99410-0807 – Chame a Frida (WhatsApp)
@@ -87,6 +87,6 @@ export default function Informative() {
         </View>
 
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }

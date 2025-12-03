@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
-import { View, Text, TouchableOpacity, ScrollView, SafeAreaView, Platform, StatusBar, Animated } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView, Platform, StatusBar, Animated } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { questions, Option, Question } from "../../data/questions";
@@ -104,7 +105,7 @@ export default function RiskAssessment() {
             </View>
           ))}
 
-          <TouchableOpacity onPress={handleEvaluate} className="bg-[#c64eccdc] py-3 rounded-full mt-8 mb-6 shadow-md">
+          <TouchableOpacity onPress={handleEvaluate} className="bg-[#FF1C8D] py-3 rounded-full mt-8 mb-6 shadow-md">
             <Text className="text-white font-bold text-center text-base">Avaliar</Text>
           </TouchableOpacity>
         </View>

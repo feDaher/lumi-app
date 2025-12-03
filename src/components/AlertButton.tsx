@@ -48,7 +48,7 @@ export default function AlertButton({ onPress }: AlertButtonProps) {
   }));
 
   return (
-    <View className="flex-1 items-center justify-center">
+    <View className="flex-1 items-center justify-center mb-20">
       <View className="items-center justify-center">
         <Animated.View
           style={[

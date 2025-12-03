@@ -52,7 +52,7 @@ export default function ModalAddress({ visible, onCancel, onConfirm }: Props) {
       return;
     }
     const sanitizedZip = sanitizeCEP(zip);
-    console.log({sanitizedZip})
+
     onConfirm?.({
       street,
       number: noNumber ? null : number,

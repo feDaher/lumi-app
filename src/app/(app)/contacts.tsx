@@ -3,7 +3,6 @@ import {
   View,
   Text,
   TouchableOpacity,
-  SafeAreaView,
   StatusBar,
   ScrollView,
   Modal,
@@ -12,6 +11,7 @@ import {
   Platform,
   FlatList,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { useDebouncedCallback } from "use-debounce";
 import { Ionicons } from "@expo/vector-icons";
 import { useMessage } from "@/src/context/MessageContext";
@@ -52,7 +52,7 @@ export default function Contacts() {
       const res = await ContactService.list(pageToLoad, 20);
 
       if (pageToLoad === 1) {
-        setContacts(res);
+        setContacts(res.data);
       } else {
         setContacts(prev => [...prev, ...res.data]);
       }

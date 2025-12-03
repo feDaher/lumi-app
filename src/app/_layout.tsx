@@ -54,16 +54,16 @@ export default function RootLayout() {
       <AuthProvider>
         <StatusBar style={current === "dark" ? "light" : "dark"} />
 
-        <Pressable
+        {/* <Pressable
           onPress={toggleTheme}
-          className="absolute top-9 right-6 p-2 rounded-full bg-zinc-200 dark:bg-accent z-50"
+          className="absolute right-6 p-2 rounded-full bg-zinc-200 dark:bg-accent z-50"
         >
           {current === "dark" ? (
             <Feather name="sun" size={22} color="#facc15" />
           ) : (
             <Feather name="moon" size={22} color="#0f172a" />
           )}
-        </Pressable>
+        </Pressable> */}
           <MessageProvider>
             <Toast />
             <RootNavigationGuard />

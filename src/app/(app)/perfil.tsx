@@ -5,8 +5,8 @@ import {
   TextInput,
   Pressable,
   ScrollView,
-  SafeAreaView,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
 
 import { useAuth } from "@/src/context/AuthContext";
@@ -21,7 +21,7 @@ import { formatCEP } from "@/src/utils";
 const COLORS = {
   pinkHeader: "#F25C9F",
   inputGray: "#F3F4F6",
-  purpleButton: "#c64eccdc",
+  purpleButton: "#FF1C8D",
   warningYellow: "#FBBF24",
   textGray: "#A0A0A0",
 };
@@ -108,7 +108,7 @@ export default function Perfil() {
       const addr = await AddressService.getUserAddress();
       setAddressObj(addr);
     } catch (err) {
-      console.log("SEM ENDEREÇO");
+      showMessage({ type: "error", text: "Sem endereço" });
     }
   }
 
