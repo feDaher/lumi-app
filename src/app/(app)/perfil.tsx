@@ -7,6 +7,7 @@ import {
   ScrollView,
   KeyboardAvoidingView, 
   Platform,
+  ActivityIndicator,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
@@ -50,7 +51,7 @@ const InputField = ({
   editable = true,
   onChange,
   style,
-  multiline,
+  multiline = false,
 }: InputFieldProps) => {
   const [isSecure, setIsSecure] = useState(isPassword);
 
@@ -60,12 +61,12 @@ const InputField = ({
         className="flex-1 text-gray-700 text-base mr-3"
         placeholder={placeholder}
         placeholderTextColor={COLORS.textGray}
-        secureTextEntry={isSecure}
+        secureTextEntry={isPassword && isSecure}
         editable={editable}
         onChangeText={onChange}
         value={value}
         style={style}
-        multiline
+        multiline={multiline}
       />
 
       {showWarning && (
@@ -102,6 +103,7 @@ export default function Perfil() {
   const [pass1, setPass1] = useState<string>('');
   const [pass2, setPass2] = useState<string>('');
   const [passOld, setPassOld] = useState<string>('');
+  const [loadingPass, setLoadingPass] = useState(false);
 
   useEffect(() => {
     loadAddress();
@@ -169,7 +171,10 @@ export default function Perfil() {
     }
 
     try {
+      setLoadingPass(true);
+
       await AuthService.changePassword(passOld, pass1);
+
       showMessage({ type: "success", text: "Senha alterada!" });
 
       setPass1('');
@@ -180,6 +185,8 @@ export default function Perfil() {
         type: "error",
         text: err?.response?.data?.message ?? "Erro ao alterar senha",
       });
+    } finally {
+      setLoadingPass(false);
     }
   }
 
@@ -238,6 +245,7 @@ export default function Perfil() {
           />
 
           <InputField
+            multiline={true}
             placeholder="Endereço"
             iconName="location-outline"
             value={addressObj ? formattedAddress : ""}
@@ -283,13 +291,18 @@ export default function Perfil() {
           />
 
           <Pressable
+            disabled={loadingPass}
             onPress={handleChangePassword}
             className="rounded-full py-4 items-center mt-6 shadow-md"
-            style={{ backgroundColor: COLORS.purpleButton }}
+            style={{ backgroundColor: COLORS.purpleButton, opacity: loadingPass ? 0.7 : 1 }}
           >
-            <Text className="text-white font-bold text-base">
-              Salvar alterações
-            </Text>
+            {loadingPass ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <Text className="text-white font-bold text-base">
+                Salvar alterações
+              </Text>
+            )}
           </Pressable>
         </ScrollView>
       </KeyboardAvoidingView>

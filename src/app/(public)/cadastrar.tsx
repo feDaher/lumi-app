@@ -58,8 +58,6 @@ export default function Cadastrar() {
         password: senha,
       });
 
-      await SecureStore.setItemAsync("token", data.token);
-
       showMessage({ type: "success", text: "Usuário cadastrado com sucesso!" });
 
       showMessage({ type: "success", text: "Usuário cadastrado!" });
