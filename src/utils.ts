@@ -29,12 +29,24 @@ export function maskCEP(value: string) {
     .slice(0, 9);
 }
 
-export function isValidCEP(cep: string) {
-  return /^[0-9]{5}-[0-9]{3}$/.test(cep);
+export function isValidCEP(value: string): boolean {
+  const cep = sanitizeCEP(value);
+  return /^\d{8}$/.test(cep);
 }
 
 export function truncateName (name: string | null | undefined, limit: number = 20): string {
   if(!name) return "";
   if(name.length <= limit) return name;
   return name.substring(0, limit) + "...";
+}
+
+export function sanitizeCEP(value: string): string {
+  return value.replace(/\D/g, "").slice(0, 8);
+}
+
+export function formatCEP(value: string | null | undefined): string {
+  if(!value) return '';
+  const digits = sanitizeCEP(value);
+  if (digits.length <= 5) return digits;
+  return `${digits.slice(0, 5)}-${digits.slice(5)}`;
 }

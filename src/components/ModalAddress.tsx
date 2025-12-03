@@ -7,7 +7,7 @@ import {
   Pressable,
   TouchableOpacity,
 } from "react-native";
-import { maskCEP, isValidCEP } from "../utils";
+import { maskCEP, isValidCEP, sanitizeCEP, formatCEP } from "../utils";
 
 type Props = {
   visible: boolean;
@@ -19,6 +19,8 @@ type Props = {
     zip: string;
     neighborhood: string;
     complement: string;
+    city: string;
+    state: string;
   }) => void;
 };
 
@@ -30,12 +32,14 @@ export default function ModalAddress({ visible, onCancel, onConfirm }: Props) {
   const [neighborhood, setNeighborhood] = useState<string>('');
   const [complement, setComplement] = useState<string>('');
   const [zipError, setZipError] = useState<string>('');
+  const [city, setCity] = useState<string>('');
+  const [state, setState] = useState<string>('');
 
   const handleZipChange = (text: string) => {
-    const masked = maskCEP(text);
-    setZip(masked);
+    const sanitized = sanitizeCEP(text);
+    setZip(formatCEP(sanitized));
 
-    if (masked.length === 9 && !isValidCEP(masked)) {
+    if (!isValidCEP(sanitized)) {
       setZipError("CEP inválido");
     } else {
       setZipError("");
@@ -47,14 +51,17 @@ export default function ModalAddress({ visible, onCancel, onConfirm }: Props) {
       setZipError("CEP inválido");
       return;
     }
-
+    const sanitizedZip = sanitizeCEP(zip);
+    console.log({sanitizedZip})
     onConfirm?.({
       street,
       number: noNumber ? null : number,
       noNumber,
-      zip,
+      zip: sanitizedZip,
       neighborhood,
       complement,
+      city,
+      state,
     });
   };
 
@@ -138,6 +145,24 @@ export default function ModalAddress({ visible, onCancel, onConfirm }: Props) {
             className="w-full bg-neutral-100 rounded-full px-4 py-3 mb-5"
           />
 
+          <TextInput
+            placeholder="Cidade"
+            value={city}
+            onChangeText={setCity}
+            className="w-full bg-neutral-100 rounded-full px-4 py-3 mb-3"
+          />
+
+          <TextInput
+            placeholder="UF"
+            value={state}
+            onChangeText={(text) => setState(text.toUpperCase())}
+            keyboardType="default"
+            autoCapitalize="characters"
+            autoCorrect={false}
+            maxLength={2}
+            className="w-full bg-neutral-100 rounded-full px-4 py-3 mb-3"
+          />
+
           <View className="flex-row justify-between">
             <Pressable
               onPress={onCancel}
@@ -146,12 +171,12 @@ export default function ModalAddress({ visible, onCancel, onConfirm }: Props) {
               <Text className="text-white font-medium">Cancelar</Text>
             </Pressable>
 
-            <Pressable
+            <TouchableOpacity
               onPress={handleConfirm}
               className="flex-1 h-11 rounded-full bg-green-500 items-center justify-center ml-2"
             >
               <Text className="text-white font-medium">Concluir</Text>
-            </Pressable>
+            </TouchableOpacity>
           </View>
         </View>
       </View>
