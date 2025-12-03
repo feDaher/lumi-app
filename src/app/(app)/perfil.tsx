@@ -5,6 +5,8 @@ import {
   TextInput,
   Pressable,
   ScrollView,
+  KeyboardAvoidingView, 
+  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
@@ -17,6 +19,7 @@ import ModalAddress from "@/src/components/ModalAddress";
 import { AddressService } from "@/src/services/address";
 import { Address } from "@/src/types";
 import { formatCEP } from "@/src/utils";
+import { AuthService } from "@/src/services/changePassword";
 
 const COLORS = {
   pinkHeader: "#F25C9F",
@@ -96,8 +99,9 @@ export default function Perfil() {
   const [addressObj, setAddressObj] = useState<Address | null>(null);
   const [addressModalVisible, setAddressModalVisible] = useState(false);
 
-  const [pass1, setPass1] = useState("");
-  const [pass2, setPass2] = useState("");
+  const [pass1, setPass1] = useState<string>('');
+  const [pass2, setPass2] = useState<string>('');
+  const [passOld, setPassOld] = useState<string>('');
 
   useEffect(() => {
     loadAddress();
@@ -155,103 +159,140 @@ export default function Perfil() {
     .filter(Boolean)
     .join(", ");
 
+  async function handleChangePassword() {
+    if (!pass1 || !pass2) {
+      return showMessage({ type: "error", text: "Preencha ambas as senhas!" });
+    }
+
+    if (pass1 !== pass2) {
+      return showMessage({ type: "error", text: "Senhas não conferem!" });
+    }
+
+    try {
+      await AuthService.changePassword(passOld, pass1);
+      showMessage({ type: "success", text: "Senha alterada!" });
+
+      setPass1('');
+      setPass2('');
+      setPassOld('');
+    } catch (err: any) {
+      showMessage({
+        type: "error",
+        text: err?.response?.data?.message ?? "Erro ao alterar senha",
+      });
+    }
+  }
+
   return (
     <SafeAreaView className="flex-1 bg-[#fdf3ea]">
       <Header title="Perfil" showBack />
 
-      <ScrollView
-        contentContainerStyle={{ paddingBottom: 100 }}
-        showsVerticalScrollIndicator={false}
-        className="px-6"
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
       >
-        <View className="items-center mt-6 mb-4">
-          <View
-            className="h-28 w-28 rounded-full bg-gray-100 shadow-md border-4 items-center justify-center"
-            style={{ borderColor: COLORS.pinkHeader }}
-          >
-            <Ionicons name="person-outline" size={60} color={COLORS.pinkHeader} />
-
+        <ScrollView
+          contentContainerStyle={{ paddingBottom: 100 }}
+          showsVerticalScrollIndicator={false}
+          className="px-6"
+        >
+          <View className="items-center mt-6 mb-4">
             <View
-              className="absolute bottom-1 right-1 rounded-full p-1 border-2"
-              style={{
-                backgroundColor: COLORS.pinkHeader,
-                borderColor: "white",
-              }}
+              className="h-28 w-28 rounded-full bg-gray-100 shadow-md border-4 items-center justify-center"
+              style={{ borderColor: COLORS.pinkHeader }}
             >
-              <Ionicons name="camera" size={12} color="white" />
+              <Ionicons name="person-outline" size={60} color={COLORS.pinkHeader} />
+
+              <View
+                className="absolute bottom-1 right-1 rounded-full p-1 border-2"
+                style={{
+                  backgroundColor: COLORS.pinkHeader,
+                  borderColor: "white",
+                }}
+              >
+                <Ionicons name="camera" size={12} color="white" />
+              </View>
             </View>
           </View>
-        </View>
 
-        <InputField
-          placeholder="Nome Completo"
-          iconName="person-outline"
-          value={user?.name}
-          editable={false}
-        />
+          <InputField
+            placeholder="Nome Completo"
+            iconName="person-outline"
+            value={user?.name}
+            editable={false}
+          />
 
-        <InputField
-          placeholder="CPF"
-          iconName="document-text-outline"
-          value={user?.cpf}
-          editable={false}
-        />
+          <InputField
+            placeholder="CPF"
+            iconName="document-text-outline"
+            value={user?.cpf}
+            editable={false}
+          />
 
-        <InputField
-          placeholder="@ email"
-          iconName="mail-outline"
-          value={user?.email}
-          editable={false}
-        />
+          <InputField
+            placeholder="@ email"
+            iconName="mail-outline"
+            value={user?.email}
+            editable={false}
+          />
 
-        <InputField
-          placeholder="Endereço"
-          iconName="location-outline"
-          value={addressObj ? formattedAddress : ""}
-          showWarning={!addressObj}
-          onChange={() => {}}
-          editable={false}
-          style={{
-            minHeight: 70,
-          }}
-        />
+          <InputField
+            placeholder="Endereço"
+            iconName="location-outline"
+            value={addressObj ? formattedAddress : ""}
+            showWarning={!addressObj}
+            onChange={() => {}}
+            editable={false}
+            style={{
+              minHeight: 70,
+            }}
+          />
 
-        <Pressable
-          onPress={() => setAddressModalVisible(true)}
-          className="rounded-xl py-2 px-3 bg-[#F25C9F] self-start mb-3"
-        >
-          <Text className="text-white font-semibold text-sm">
-            {addressObj ? "Editar endereço" : "Cadastrar endereço"}
-          </Text>
-        </Pressable>
+          <Pressable
+            onPress={() => setAddressModalVisible(true)}
+            className="rounded-xl py-2 px-3 bg-[#F25C9F] self-start mb-3"
+          >
+            <Text className="text-white font-semibold text-sm">
+              {addressObj ? "Editar endereço" : "Cadastrar endereço"}
+            </Text>
+          </Pressable>
 
-        <InputField
-          placeholder="Nova senha"
-          iconName="key-outline"
-          isPassword
-          onChange={setPass1}
-          value={pass1}
-        />
+          <InputField
+            placeholder="Senha atual"
+            iconName="key-outline"
+            isPassword
+            value={passOld}
+            onChange={setPassOld}
+          />
 
-        <InputField
-          placeholder="Repita a senha"
-          iconName="key-outline"
-          isPassword
-          onChange={setPass2}
-          value={pass2}
-        />
+          <InputField
+            placeholder="Nova senha"
+            iconName="key-outline"
+            isPassword
+            onChange={setPass1}
+            value={pass1}
+          />
 
-        <Pressable
-          onPress={handleSaveChanges}
-          className="rounded-full py-4 items-center mt-6 shadow-md"
-          style={{ backgroundColor: COLORS.purpleButton }}
-        >
-          <Text className="text-white font-bold text-base">
-            Salvar alterações
-          </Text>
-        </Pressable>
-      </ScrollView>
+          <InputField
+            placeholder="Repita a senha"
+            iconName="key-outline"
+            isPassword
+            onChange={setPass2}
+            value={pass2}
+          />
 
+          <Pressable
+            onPress={handleChangePassword}
+            className="rounded-full py-4 items-center mt-6 shadow-md"
+            style={{ backgroundColor: COLORS.purpleButton }}
+          >
+            <Text className="text-white font-bold text-base">
+              Salvar alterações
+            </Text>
+          </Pressable>
+        </ScrollView>
+      </KeyboardAvoidingView>
       <ModalAddress
         visible={addressModalVisible}
         onCancel={() => setAddressModalVisible(false)}
